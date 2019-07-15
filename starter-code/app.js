@@ -1,0 +1,50 @@
+// require npm modules
+require('dotenv').config();
+const express = require('express');
+
+const app = express();
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const path = require('path');
+const bodyParser = require('body-parser');
+// const flash = require("connect-flash");
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+// const SlackStrategy = require('passport-slack').Strategy;
+// const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+// models
+const User = require('./models/user');
+const Itinerary = require('./models/itinerary');
+const Review = require('./models/review');
+
+// mongoose connection
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+  console.log('connected to MongoDB');
+});
+
+// morgan
+app.use(morgan('dev'));
+
+// define hbs views
+app.set('view engine', 'hbs');
+app.set('views', `${__dirname  }/views`);
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// routes path
+const indexRoutes = require('./routes/index');
+
+app.use('/', indexRoutes);
+
+app.listen(process.env.PORT, () => console.log(`server is running on port ${process.env.PORT}`));
