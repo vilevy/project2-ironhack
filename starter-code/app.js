@@ -13,6 +13,8 @@ const MongoStore = require('connect-mongo')(session);
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const hbs = require('hbs');
+const multer = require('multer');
 // const SlackStrategy = require('passport-slack').Strategy;
 // const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
@@ -44,7 +46,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // routes path
 const indexRoutes = require('./routes/index');
-
 app.use('/', indexRoutes);
+
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
 
 app.listen(process.env.PORT, () => console.log(`server is running on port ${process.env.PORT}`));
