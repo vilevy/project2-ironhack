@@ -1,11 +1,13 @@
-<img src="{{profileImg}}" alt="{{name}} profile picture">
+{{message}}
+<img src="{{profileImg}}" alt="{{name}} profile picture" width="300">
 <h2>Welcome, {{name}}</h2>
 {{role}}<br>
 {{username}}<br>
-{{birthDate}}<br>
+{{birthDate.day}}/{{birthDate.month}}/{{birthDate.year}}<br>
 {{phone}}<br>
 {{email}}<br>
 {{languages}}<br>
 {{interests}}<br>
 {{about}}<br>
 <a href="/auth/edit/{{_id}}">Edit profile</a>
+<a href="/auth/logout">Logout</a>

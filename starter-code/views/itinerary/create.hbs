@@ -1,0 +1,67 @@
+<h2>Create new itinerary</h2>
+
+<form action="/itinerary/create" method="POST" id="create-itinerary-form">
+  <label for="name">Itinerary name:</label>
+  <input id="name" type="text" name="name" placeholder="Itinerary name" required>
+  <br><br>
+  <label for="birthDate">Date:</label>
+  <input type="date" name="date" required>
+  <br><br>
+  <label for="description">Description:</label>
+  <p>This field is...</p>
+  <textarea name="description" id="description" cols="150" rows="7"></textarea>
+  <br><br>
+  <label for="capacity">Capacity:</label>
+  <input type="text" name="capacity" placeholder="ex.: 10" required>
+
+  <p>Itinerary languages:<br>
+    {{#each user.languages}}
+    <input type="checkbox" name="interests" value="{{this}}" checked>{{this}}
+    {{/each}}
+  </p>
+
+
+  {{#if message}}
+  <div>{{ message }}</div>
+  {{/if}}
+  <div class="pac-card" id="pac-card">
+    <div>
+      <div id="title">
+        Search
+      </div>
+    </div>
+    <div id="pac-container">
+      <input id="pac-input" type="text" placeholder="Enter a location">
+    </div>
+  </div>
+  <div id="map"></div>
+  <div id="infowindow-content">
+    <img src="" width="16" height="16" id="place-icon">
+    <span id="place-name" class="title"></span><br>
+    <span id="place-address"></span>
+  </div>
+
+  {{!-- <label for="time">Time:</label>
+  <input type="datetime-local" name="time" id="place-time"> --}}
+  <select name="hours" id="hours">
+    {{#each hours}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select name="minutes" id="minutes">
+    {{#each minutes}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <br><br>
+  <button id="add-place">Add place</button>
+  <br><br>
+  <div class="itineraty-summary"></div>
+  <br><br>
+  <button>Create itinerary</button>
+
+
+
+</form>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5lG_0f00dNMOelO1DPnp8ZwFMuPEnQTU&libraries=places"></script>
+<script src="/js/script.js"></script>

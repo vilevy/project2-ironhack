@@ -1,8 +1,12 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-undef */
 /* eslint-disable import/newline-after-import */
 /* eslint-disable max-len */
 const express = require('express');
 const authRoutes = express.Router();
 const passport = require('passport');
+const ensureLogin = require('connect-ensure-login');
 
 const multer = require('multer');
 const upload = multer({ dest: './public/uploads/' });
@@ -14,14 +18,32 @@ const User = require('../models/user');
 
 // guide signup
 authRoutes.get('/guide-signup', (req, res, next) => {
-  res.render('auth/guide-signup');
+  const days = [];
+  for (let i = 1; i <= 31; i += 1) {
+    days.push(i);
+  }
+  const months = [];
+  for (let i = 1; i <= 12; i += 1) {
+    months.push(i);
+  }
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = currentYear; i >= (currentYear - 100); i -= 1) {
+    years.push(i);
+  }
+  res.render('auth/guide-signup', { days, months, years });
 });
 
 authRoutes.post('/guide-signup', upload.single('profileImg'), (req, res, next) => {
-  const { role, name, username, birthDate, phone, email, languages, interests, about, password } = req.body;
-  const profileImg = `/uploads/${req.file.filename}`;
+  const {
+    role, name, username, birthDateDay, birthDateMonth, birthDateYear, phone, email, languages, interests, about, password,
+  } = req.body;
+  let profileImg = '/images/default-avatar.png';
+  if (req.file !== undefined) {
+    profileImg = `/uploads/${req.file.filename}`;
+  }
 
-  if (name === '' || username === '' || birthDate === '' || phone === '' || email === '' || password === '') {
+  if (name === '' || username === '' || birthDateDay === '' || birthDateMonth === '' || birthDateYear === '' || phone === '' || email === '' || password === '') {
     res.render('auth/signup', { message: 'Please, fill all required fields.' });
     return;
   }
@@ -40,7 +62,7 @@ authRoutes.post('/guide-signup', upload.single('profileImg'), (req, res, next) =
         role,
         name,
         username,
-        birthDate,
+        birthDate: { day: birthDateDay, month: birthDateMonth, year: birthDateYear },
         phone,
         email,
         languages,
@@ -65,14 +87,29 @@ authRoutes.post('/guide-signup', upload.single('profileImg'), (req, res, next) =
 
 // tourist signup
 authRoutes.get('/tourist-signup', (req, res, next) => {
-  res.render('auth/tourist-signup');
+  const days = [];
+  for (let i = 1; i <= 31; i += 1) {
+    days.push(i);
+  }
+  const months = [];
+  for (let i = 1; i <= 12; i += 1) {
+    months.push(i);
+  }
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = currentYear; i >= (currentYear - 100); i -= 1) {
+    years.push(i);
+  }
+  res.render('auth/tourist-signup', { days, months, years });
 });
 
 authRoutes.post('/tourist-signup', upload.single('profileImg'), (req, res, next) => {
-  const { role, name, username, birthDate, phone, email, languages, interests, about, password } = req.body;
+  const {
+    role, name, username, birthDateDay, birthDateMonth, birthDateYear, phone, email, languages, interests, about, password 
+  } = req.body;
   const profileImg = `/uploads/${req.file.filename}`;
 
-  if (name === '' || username === '' || birthDate === '' || phone === '' || email === '' || password === '') {
+  if (name === '' || username === '' || birthDateDay === '' || birthDateMonth === '' || birthDateYear === '' || phone === '' || email === '' || password === '') {
     res.render('auth/signup', { message: 'Please, fill all required fields.' });
     return;
   }
@@ -91,7 +128,7 @@ authRoutes.post('/tourist-signup', upload.single('profileImg'), (req, res, next)
         role,
         name,
         username,
-        birthDate,
+        birthDate: { day: birthDateDay, month: birthDateMonth, year: birthDateYear },
         phone,
         email,
         languages,
@@ -114,9 +151,18 @@ authRoutes.post('/tourist-signup', upload.single('profileImg'), (req, res, next)
     });
 });
 
+// function for checking logged user
+const checkUserLogged = () => (req, res, next) => {
+  if (req.isAuthenticated() && req.user.id === req.params.id) {
+    next();
+  } else {
+    res.redirect(`/auth/profile/${req.user._id}`);
+  }
+};
+
 
 // profile
-authRoutes.get('/profile/:id', (req, res, next) => {
+authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLogged(), (req, res, next) => {
   const userID = req.params.id;
   User.findById(userID)
     .then(((user) => {
@@ -127,7 +173,7 @@ authRoutes.get('/profile/:id', (req, res, next) => {
 
 
 // edit profile
-authRoutes.get('/edit/:id', (req, res, next) => {
+authRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLogged(), (req, res, next) => {
   const userID = req.params.id;
   User.findById(userID)
     .then(((user) => {
@@ -153,13 +199,28 @@ authRoutes.get('/edit/:id', (req, res, next) => {
           }
         }
       }
-      res.render('auth/edit', { user, allLanguages, allInterests });
+      const days = [];
+      for (let i = 1; i <= 31; i += 1) {
+        days.push(i);
+      }
+      const months = [];
+      for (let i = 1; i <= 12; i += 1) {
+        months.push(i);
+      }
+      const currentYear = new Date().getFullYear();
+      const years = [];
+      for (let i = currentYear; i >= (currentYear - 100); i -= 1) {
+        years.push(i);
+      }
+      res.render('auth/edit', { user, allLanguages, allInterests, days, months, years });
     }))
     .catch(err => console.log(err));
 });
 
 authRoutes.post(('/edit/:id'), upload.single('profileImg'), (req, res, next) => {
-  let { name, birthDate, phone, email, languages, interests, about, oldProfileImg, oldPassword, profileImg, password } = req.body;
+  let {
+    name, birthDateDay, birthDateMonth, birthDateYear, phone, email, languages, interests, about, oldProfileImg, oldPassword, profileImg, password 
+  } = req.body;
   if (req.file === undefined) {
     profileImg = oldProfileImg;
   } else {
@@ -173,11 +234,35 @@ authRoutes.post(('/edit/:id'), upload.single('profileImg'), (req, res, next) => 
     password = bcrypt.hashSync(password, salt, null);
   }
 
+  const birthDate = { day: birthDateDay, month: birthDateMonth, year: birthDateYear };
+
   User.updateOne({ _id: req.params.id }, { $set: { name, birthDate, phone, email, languages, interests, about, profileImg, password } })
     .then(() => {
       res.redirect(`/auth/profile/${req.params.id}`);
     })
     .catch(err => console.log(err));
+});
+
+// login
+authRoutes.get('/login', (req, res, next) => {
+  res.render('auth/login');
+});
+
+authRoutes.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) { return next(err); }
+    if (!user) { return res.render('auth/login', { message: 'Wrong credentials' }); }
+    req.logIn(user, (err) => {
+      if (err) { return next(err); }
+      return res.redirect(`/auth/profile/${user._id}`);
+    });
+  })(req, res, next);
+});
+
+// logout
+authRoutes.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/auth/login');
 });
 
 module.exports = authRoutes;

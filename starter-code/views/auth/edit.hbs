@@ -6,8 +6,34 @@
   <label for="name">Full name:</label>
   <input id="name" type="text" name="name" value="{{user.name}}" required>
   <br><br>
-  <label for="birthDate">Birth Date:</label>
-  <input id="birthDate" type="date" name="birthDate" value="12/01/1991" required>
+  <label for="birthDate">Birth Date*:</label>
+  <select name="birthDateDay" required>
+    <option value="" disabled>Day</option>
+    {{#if user.birthDate.day}}
+      <option value="{{user.birthDate.day}}" selected>{{user.birthDate.day}}</option>
+    {{/if}}
+    {{#each days}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select name="birthDateMonth" required>
+    <option value="" disabled>Month</option>
+    {{#if user.birthDate.month}}
+      <option value="{{user.birthDate.month}}" selected>{{user.birthDate.month}}</option>
+    {{/if}}
+    {{#each months}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select name="birthDateYear" required>
+    <option value="" disabled>Year</option>
+    {{#if user.birthDate.year}}
+      <option value="{{user.birthDate.year}}" selected>{{user.birthDate.year}}</option>
+    {{/if}}
+    {{#each years}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
   <br><br>
   <label for="phone">Phone:</label>
   <input type="tel" name="phone" value="{{user.phone}}" required>
@@ -15,23 +41,23 @@
   <label for="email">E-mail:</label>
   <input id="email" type="text" name="email" value="{{user.email}}" required>
   <br><br>
-  <p> Chosse the languages you speak:<br>
+  <p>Chosse the languages you speak:<br>
     {{#each user.languages}}
-      <input type="checkbox" name="languages" value="{{this}}" checked>{{this}}
+    <input type="checkbox" name="languages" value="{{this}}" checked>{{this}}
     {{/each}}
 
     {{#each allLanguages}}
-      <input type="checkbox" name="languages" value="{{this}}">{{this}}
+    <input type="checkbox" name="languages" value="{{this}}">{{this}}
     {{/each}}
   </p>
   <br><br>
-  <p> Interests:<br>
+  <p>Interests:<br>
     {{#each user.interests}}
-      <input type="checkbox" name="interests" value="{{this}}" checked>{{this}}
+    <input type="checkbox" name="interests" value="{{this}}" checked>{{this}}
     {{/each}}
 
     {{#each allInterests}}
-      <input type="checkbox" name="interests" value="{{this}}">{{this}}
+    <input type="checkbox" name="interests" value="{{this}}">{{this}}
     {{/each}}
   </p>
 
@@ -42,7 +68,7 @@
 
   <br><br>
   <label for="profileImg">Profile picture:</label>
-  <img src="{{user.profileImg}}" alt="{{user.name}} profile picture">
+  <img src="{{user.profileImg}}" alt="{{user.name}} profile picture" width="300">
   <input type="hidden" name="oldProfileImg" value="{{user.profileImg}}">
   <input type="file" name="profileImg">
 
@@ -52,7 +78,7 @@
   <input type="password" name="password">
 
   {{#if message}}
-  <div class="error-message">{{ message }}</div>
+  <div>{{ message }}</div>
   {{/if}}
 
   <br><br>

@@ -1,18 +1,24 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const itinerarySchema = new Schema ({
-  // dia, horarios/locais/preço, idioma, descritivo, owner, inscritos
-  day: { type: Date, required: true },
+const { Schema } = mongoose;
+
+const itinerarySchema = new Schema({
+  name: { type: String, required: true },
+  date: { type: Date, required: true },
+  description: { type: String, required: true },
   places: { type: [{
-    time: String,
-    place: String,
-    price: String,
+    startTime: String,
+    endTime: String,
+    place: {
+      place_id: String,
+      lat: Number,
+      long: Number,
+      name: String,
+    },
   }], required: true },
   estimatedTime: Number,
   capacity: { type: Number, required: true },
   languages: { type: Array, required: true },
-  description: { type: String, required: true },
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
   subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 },

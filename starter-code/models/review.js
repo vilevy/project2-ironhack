@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const reviewSchema = new Schema ({
+const { Schema } = mongoose;
+
+const reviewSchema = new Schema({
   reviewedGuide: { type: Schema.Types.ObjectId, ref: 'User' },
   reviewer: { type: Schema.Types.ObjectId, ref: 'User' },
   punctuality: { type: Number, min: 0, max: 5},

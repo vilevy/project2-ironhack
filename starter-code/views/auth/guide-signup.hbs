@@ -9,7 +9,25 @@
   <input id="name" type="text" name="username" placeholder="Your username" required>
   <br><br>
   <label for="birthDate">Birth Date*:</label>
-  <input id="birthDate" type="date" name="birthDate"  required>
+  <select name="birthDateDay" required>
+    <option value="" disabled selected>Day</option>
+    {{#each days}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select name="birthDateMonth" required>
+      <option value="" disabled selected>Month</option>
+    {{#each months}}
+      <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select name="birthDateYear" required>
+    <option value="" disabled selected>Year</option>
+    {{#each years}}
+    <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+
   <br><br>
   <label for="phone">Phone*:</label>
   <input type="tel" name="phone" placeholder="+XX (XX) XXXXX-XXXX" required>
@@ -121,7 +139,7 @@
   <input type="password" name="password" required>
 
   {{#if message}}
-  <div class="error-message">{{ message }}</div>
+  <div>{{ message }}</div>
   {{/if}}
 
   <br><br>
