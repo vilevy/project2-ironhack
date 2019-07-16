@@ -31,11 +31,11 @@ itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, 
   const userID = req.user._id;
   const hours = [];
   for (let i = 0; i <= 23; i += 1) {
-    hours.push(i);
+    hours.push(`${i}`.padStart(2, 0));
   }
   const minutes = [];
-  for (let i = 0; i <= 59; i += 1) {
-    minutes.push(i);
+  for (let i = 0; i < 60; i += 15) {
+    minutes.push(`${i}`.padStart(2, 0));
   }
   User.findById(userID)
     .then(((user) => {

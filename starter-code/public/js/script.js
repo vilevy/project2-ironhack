@@ -1,4 +1,27 @@
+const addBtn = document.querySelector('#add-place');
+const itineraryForm = document.querySelector('#create-itinerary-form');
+const hours = document.querySelector('#place-hours');
+const minutes = document.querySelector('#place-minutes');
+let placeId = '';
+let placeName = '';
+const itinerarySummary = document.querySelector('#itineraty-summary');
+
+addBtn.addEventListener('click', () => {
+  const inputHidden = document.createElement('input');
+  inputHidden.setAttribute('type', 'hidden');
+  inputHidden.setAttribute('name', 'place');
+  inputHidden.setAttribute('value', `${hours.value}:${minutes.value}:${placeId}`);
+  itineraryForm.append(inputHidden);
+  itinerarySummary.innerHTML += `<div class="" ${hours.value}:${minutes.value} - ${placeName}`;
+  hours.value = '';
+  minutes.value = '';
+  addBtn.disabled = true;
+});
+
 function initMap() {
+
+  addBtn.disabled = true;
+
   const map = new google.maps.Map(document.getElementById('map'), {
     center: {
       lat: -33.8688,
@@ -35,6 +58,8 @@ function initMap() {
     infowindow.close();
     marker.setVisible(false);
     const place = autocomplete.getPlace();
+    placeId = place.place_id;
+    placeName = place.name;
     if (!place.geometry) {
       // User entered the name of a Place that was not suggested and
       // pressed the Enter key, or the Place Details request failed.
@@ -53,7 +78,6 @@ function initMap() {
     marker.setPosition(place.geometry.location);
     marker.setVisible(true);
 
-
     let address = '';
     if (place.address_components) {
       address = [
@@ -70,37 +94,23 @@ function initMap() {
     infowindowContent.children['place-address'].textContent = address;
     infowindow.open(map, marker);
 
-    const addBtn = document.querySelector('#add-place');
-    const itineraryForm = document.querySelector('#create-itinerary-form');
-    const inputHidden = document.createElement('input');
-    const time = document.querySelector('#place-time');
-    addBtn.addEventListener('click', () => {
-      inputHidden.setAttribute('type', 'hidden');
-      inputHidden.setAttribute('name', 'place');
-      inputHidden.setAttribute('value', `${time.value} ? ${place.place_id}`);
-      itineraryForm.appendChild(inputHidden);
-      time.value = 0;
-    });
   });
-
-
-  // Sets a listener on a radio button to change the filter type on Places
-  // Autocomplete.
-  function setupClickListener(id, types) {
-    const radioButton = document.getElementById(id);
-    radioButton.addEventListener('click', () => {
-      autocomplete.setTypes(types);
-    });
-  }
-
-  document.getElementById('use-strict-bounds')
-    .addEventListener('click', () => {
-      console.log(`Checkbox clicked! New state=${this.checked}`);
-      autocomplete.setOptions({
-        strictBounds: this.checked
-      });
-    });
 }
 
+// const addBtn = document.querySelector('#add-place');
+// const hours = document.querySelector('#place-hours');
+// const minutes = document.querySelector('#place-minutes');
+
+
+const checkHoursAndMinutes = () => {
+  if (hours.value === '' || minutes.value === '') {
+    addBtn.disabled = true;
+  } else {
+    addBtn.disabled = false;
+  }
+};
+
+hours.addEventListener('change', checkHoursAndMinutes);
+minutes.addEventListener('change', checkHoursAndMinutes);
 
 window.onload = initMap();

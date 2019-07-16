@@ -43,12 +43,14 @@
 
   {{!-- <label for="time">Time:</label>
   <input type="datetime-local" name="time" id="place-time"> --}}
-  <select name="hours" id="hours">
+  <select name="hours" id="place-hours">
+    <option value="" selected disabled>Hours</option>
     {{#each hours}}
       <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
-  <select name="minutes" id="minutes">
+  <select name="minutes" id="place-minutes">
+    <option value="" selected disabled>Minutes</option>
     {{#each minutes}}
       <option value="{{this}}">{{this}}</option>
     {{/each}}
@@ -56,7 +58,7 @@
   <br><br>
   <button id="add-place">Add place</button>
   <br><br>
-  <div class="itineraty-summary"></div>
+  <div id="itineraty-summary"></div>
   <br><br>
   <button>Create itinerary</button>
 
