@@ -165,6 +165,7 @@ const checkUserLogged = () => (req, res, next) => {
 authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLogged(), (req, res, next) => {
   const userID = req.params.id;
   User.findById(userID)
+    .populate('itineraries')
     .then(((user) => {
       res.render('auth/profile', user);
     }))

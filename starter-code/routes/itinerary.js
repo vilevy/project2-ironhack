@@ -3,6 +3,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable import/newline-after-import */
 /* eslint-disable max-len */
+require('dotenv').config();
 const express = require('express');
 const itineraryRoutes = express.Router();
 const passport = require('passport');
@@ -18,16 +19,30 @@ const User = require('../models/user');
 const Itinerary = require('../models/itinerary');
 
 // function for checking logged user
-// const checkUserLogged = () => (req, res, next) => {
-//   if (req.isAuthenticated() && req.user.id === req.params.id) {
-//     next();
-//   } else {
-//     res.redirect(`/auth/profile/${req.user._id}`);
-//   }
-// };
+const checkUserLogged = () => (req, res, next) => {
+  if (req.isAuthenticated() && req.user.id === req.params.id) {
+    next();
+  } else {
+    res.redirect(`/auth/profile/${req.user._id}`);
+  }
+};
+
+const checkUserLoggedOwner = () => (req, res, next) => {
+  const itineraryID = req.params.id;
+  let ownerID = '';
+  Itinerary.findById(itineraryID)
+    .then((itinerary) => {
+      ownerID = itinerary.owner;
+      if (req.isAuthenticated() && JSON.stringify(req.user.id) === JSON.stringify(ownerID)) {
+        next();
+      }
+    })
+    .catch(() => res.redirect(`/auth/profile/${req.user._id}`));
+};
 
 // create itinerary
 itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, res, next) => {
+  const googleKey = process.env.MAPS_KEY;
   const userID = req.user._id;
   const hours = [];
   for (let i = 0; i <= 23; i += 1) {
@@ -37,42 +52,111 @@ itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, 
   for (let i = 0; i < 60; i += 15) {
     minutes.push(`${i}`.padStart(2, 0));
   }
+  const cathegories = ['Sports', 'Bars', 'Lgbt', 'Family']; 
   User.findById(userID)
     .then(((user) => {
-      res.render('itinerary/create', { user, hours, minutes });
+      res.render('itinerary/create', { user, hours, minutes, cathegories, googleKey });
     }))
     .catch(err => console.log(err));
 });
 
-// const googleSearchApi = axios.create({
-//   baseURL: 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=&inputtype=textquery&key=YOUR_API_KEY',
-// });
-// 'https://maps.googleapis.com/maps/api/place/autocomplete/xml?input=Amoeba&key=AIzaSyBCNveOYYDWSHcUG4jhYiKAEQh0y4l6vtI'
-// // https://maps.googleapis.com/maps/api/place/queryautocomplete/json?key=AIzaSyBCNveOYYDWSHcUG4jhYiKAEQh0y4l6vtI&input=mas
-// const getCountryInfo = (theName) => {
-//   restCountriesApi.get(theName)
-//     .then((responseFromAPI) => {
-//       console.log('Response from API is: ', responseFromAPI.data);
-//     })
-//     .catch((err) => {
-//       console.log('Error is: ', err);
-//     });
-// };
 
-// document.getElementById('theButton').onclick = () => {
-//   const country = document.getElementById('theInput').value;
-//   getCountryInfo(country);
-// };
+itineraryRoutes.post('/create', (req, res, next) => {
+  const { name, city, description, capacity, languages, cathegories, place } = req.body;
+  let { date } = req.body;
+  dateDay = new Date(date).getDate() + 1;
+  dateMonth = new Date(date).getMonth() + 1;
+  dateYear = new Date(date).getFullYear();
+  date = `${dateDay}/${dateMonth}/${dateYear}`;
+  const owner = req.user._id;
+  if (name === '' || city === '' || date === '' || description === '' || capacity === '' || languages === '' || cathegories === '' || place === '') {
+    res.render('itinerary/create', { message: 'Please, fill all required fields.' });
+    return;
+  }
 
-itineraryRoutes.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) { return next(err); }
-    if (!user) { return res.render('auth/login', { message: 'Wrong credentials' }); }
-    req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      return res.redirect(`/auth/profile/${user._id}`);
+  const placesObjArr = [];
+  if (Array.isArray(place)) {
+    place.forEach((el) => {
+      const placeArrSplit = el.split(':');
+      placeObj = {
+        hours: placeArrSplit[0],
+        minutes: placeArrSplit[1],
+        name: placeArrSplit[2],
+        id: placeArrSplit[3],
+      };
+      placesObjArr.push(placeObj);
     });
-  })(req, res, next);
+  } else {
+    const placeArrSplit = place.split(':');
+    placeObj = {
+      hours: placeArrSplit[0],
+      minutes: placeArrSplit[1],
+      name: placeArrSplit[2],
+      id: placeArrSplit[3],
+    };
+    placesObjArr.push(placeObj);
+  }
+
+  const newItinerary = new Itinerary({
+    name,
+    city,
+    date,
+    description,
+    capacity,
+    remainingCapacity: capacity,
+    languages,
+    cathegories,
+    places: placesObjArr,
+    owner,
+  });
+
+  newItinerary.save((err) => {
+    if (err) {
+      res.send(err);
+    } else {
+      User.updateOne({ _id: owner }, { $push: { itineraries: newItinerary._id } })
+        .then(() => {
+          res.redirect(`/auth/profile/${req.user._id}`);
+        })
+        .catch(error => console.log(error));
+    }
+  });
+});
+
+// function for checking role
+const checkRoles = (userRole) => {
+  return (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === userRole) {
+      req.isRole = true;
+      next();
+    } else {
+      req.isRole = false;
+      next();
+      // res.redirect('/auth/login');
+    }
+  };
+};
+
+// view each itinerary
+itineraryRoutes.get('/itinerary/:id', checkRoles('tourist'), (req, res, next) => {
+  const { user } = req;
+  const { isRole } = req;
+  const itineraryID = req.params.id;
+  Itinerary.findById(itineraryID)
+    .then(((itinerary) => {
+      res.render('itinerary/itinerary', { itinerary, user, isRole });
+    }))
+    .catch(err => console.log(err));
+});
+
+// edit itinerary
+itineraryRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLoggedOwner(), (req, res, next) => {
+  const itineraryID = req.params.id;
+  Itinerary.findById(itineraryID)
+    .then(((itinerary) => {
+      res.render('itinerary/edit', { itinerary });
+    }))
+    .catch(err => console.log(err));
 });
 
 module.exports = itineraryRoutes;

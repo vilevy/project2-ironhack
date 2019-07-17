@@ -9,5 +9,11 @@
 {{languages}}<br>
 {{interests}}<br>
 {{about}}<br>
+<a href="/itinerary/create">Create Itinerary</a>
 <a href="/auth/edit/{{_id}}">Edit profile</a>
 <a href="/auth/logout">Logout</a>
+<br>
+<h2>My itineraries</h2>
+{{#each itineraries}}
+  {{name}} - {{city}} - {{date}} - <a href="/itinerary/itinerary/{{this._id}}">View</a><br>
+{{/each}}

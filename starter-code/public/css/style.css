@@ -21,6 +21,11 @@ form {
   height: 100%
 }
 
+#map2 {
+  height: 400px;
+  width: 900px;
+}
+
 #description {
   font-family: Roboto;
   font-size: 15px;
@@ -87,4 +92,12 @@ form {
   font-size: 25px;
   font-weight: 500;
   padding: 6px 12px;
+}
+
+.tableDeleteDiv {
+  color: 'red';
+}
+
+.tableDeleteDiv:hover {
+  cursor: pointer;
 }

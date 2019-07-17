@@ -4,21 +4,14 @@ const { Schema } = mongoose;
 
 const itinerarySchema = new Schema({
   name: { type: String, required: true },
-  date: { type: Date, required: true },
+  city: { type: String, required: true },
+  date: { type: String, required: true },
   description: { type: String, required: true },
-  places: { type: [{
-    startTime: String,
-    endTime: String,
-    place: {
-      place_id: String,
-      lat: Number,
-      long: Number,
-      name: String,
-    },
-  }], required: true },
-  estimatedTime: Number,
+  places: { type: [{}], required: true },
   capacity: { type: Number, required: true },
+  remainingCapacity: { type: Number, required: true },
   languages: { type: Array, required: true },
+  cathegories: Array,
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
   subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 },

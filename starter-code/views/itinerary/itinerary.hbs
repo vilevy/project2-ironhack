@@ -1,0 +1,9 @@
+{{itinerary.name}}<br>
+{{itinerary.description}}<br>
+{{#each itinerary.places}}
+  {{this.name}} - {{this.hours}}:{{this.minutes}}<br>
+{{/each}}
+
+{{#if isRole}}
+  <p>Subscribe</p>
+{{/if}}
