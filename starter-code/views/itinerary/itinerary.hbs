@@ -1,9 +1,20 @@
-{{itinerary.name}}<br>
-{{itinerary.description}}<br>
+Name: {{itinerary.name}}<br><br>
+Description: {{itinerary.description}}<br><br>
 {{#each itinerary.places}}
   {{this.name}} - {{this.hours}}:{{this.minutes}}<br>
-{{/each}}
+{{/each}}<br>
+Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
 
 {{#if isRole}}
-  <p>Subscribe</p>
+  <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+    <select name="subscribeNum" id="subscribeNum">
+      {{#each remainingCapacityArr}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
+    <button type="submit" id="subscribe-btn">Subscribe</button>
+  </form>
 {{/if}}
+
+
+<script src="/js/script.js"></script>

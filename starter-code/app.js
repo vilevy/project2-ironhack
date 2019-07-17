@@ -81,8 +81,6 @@ passport.use(new LocalStrategy({
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return next(null, false, { message: 'Incorrect username or password' });
     }
-    console.log('session:', user);
-
     return next(null, user);
   });
 }));

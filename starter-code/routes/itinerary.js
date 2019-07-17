@@ -27,6 +27,32 @@ const checkUserLogged = () => (req, res, next) => {
   }
 };
 
+// function for checking role and continuing
+const checkRolesContinue = (userRole) => {
+  return (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === userRole) {
+      req.isRole = true;
+      next();
+    } else {
+      req.isRole = false;
+      next();
+    }
+  };
+};
+
+// function for checking role and redirecting
+const checkRolesRedirect = (userRole) => {
+  return (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === userRole) {
+      req.isRole = true;
+      next();
+    } else {
+      req.isRole = false;
+      res.redirect(`/auth/profile/${req.user.id}`);
+    }
+  };
+};
+
 const checkUserLoggedOwner = () => (req, res, next) => {
   const itineraryID = req.params.id;
   let ownerID = '';
@@ -41,7 +67,7 @@ const checkUserLoggedOwner = () => (req, res, next) => {
 };
 
 // create itinerary
-itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, res, next) => {
+itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), checkRolesRedirect('guide'), (req, res, next) => {
   const googleKey = process.env.MAPS_KEY;
   const userID = req.user._id;
   const hours = [];
@@ -123,31 +149,41 @@ itineraryRoutes.post('/create', (req, res, next) => {
   });
 });
 
-// function for checking role
-const checkRoles = (userRole) => {
-  return (req, res, next) => {
-    if (req.isAuthenticated() && req.user.role === userRole) {
-      req.isRole = true;
-      next();
-    } else {
-      req.isRole = false;
-      next();
-      // res.redirect('/auth/login');
-    }
-  };
-};
-
 // view each itinerary
-itineraryRoutes.get('/itinerary/:id', checkRoles('tourist'), (req, res, next) => {
+itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
   const { user } = req;
   const { isRole } = req;
   const itineraryID = req.params.id;
   Itinerary.findById(itineraryID)
     .then(((itinerary) => {
-      res.render('itinerary/itinerary', { itinerary, user, isRole });
+      const remainingCapacityArr = [];
+      for (let i = 1; i <= itinerary.remainingCapacity; i += 1) {
+        remainingCapacityArr.push(i);
+      }
+      res.render('itinerary/itinerary', { itinerary, user, remainingCapacityArr, isRole });
     }))
     .catch(err => console.log(err));
 });
+
+itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
+  const subscribers = parseInt(req.body.subscribeNum, 10);
+  const itineraryID = req.params.id;
+  Itinerary.findById(itineraryID)
+    .then((singleItinerary) => {
+      Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribers } })
+        .then((() => {
+          res.redirect(`/itinerary/itinerary/${itineraryID}`);
+        }))
+        .catch(err => console.log(err));
+    })
+    .catch(error => console.log(error));
+});
+
+// User.updateOne({ _id: req.params.id }, { $set: { name, birthDate, phone, email, languages, interests, about, profileImg, password } })
+//     .then(() => {
+//       res.redirect(`/auth/profile/${req.params.id}`);
+//     })
+//     .catch(err => console.log(err));
 
 // edit itinerary
 itineraryRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLoggedOwner(), (req, res, next) => {
