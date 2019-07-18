@@ -5,8 +5,19 @@ Description: {{itinerary.description}}<br><br>
 {{/each}}<br>
 
 {{#if isSubs}}
-  You have already subscribed for {{number}} people.
+  You have already subscribed for {{number}} people.<br>
+  <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+    <select name="subscribeNum" id="subscribeNum">
+        <option value="0">0</option>      
+      {{#each remainingCapacityArr}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
+    <button type="submit" id="subscribe-btn">Update</button>
+  </form>
 {{/if}}
+<br>
+Capacity: {{itinerary.capacity}}
 <br>
 Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
 
@@ -26,8 +37,5 @@ Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
       No available places remaining.
   {{/if}}
 {{/if}}
-
-
-
 
 <script src="/js/script.js"></script>
