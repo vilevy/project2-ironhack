@@ -1,6 +1,6 @@
 <h2>Create new itinerary</h2>
 
-<form action="/itinerary/create" method="POST" id="create-itinerary-form">
+<form class="form-full" action="/itinerary/create" method="POST" id="create-itinerary-form">
   <label for="name">Itinerary name:</label>
   <input id="name" type="text" name="name" placeholder="Itinerary name" required>
   <br><br>
@@ -23,9 +23,9 @@
     {{/each}}
   </p>
 
-  <p>Cathegories:<br>
-    {{#each cathegories}}
-      <input type="checkbox" name="cathegories" value="{{this}}">{{this}}
+  <p>Categories:<br>
+    {{#each categories}}
+      <input type="checkbox" name="categories" value="{{this}}">{{this}}
     {{/each}}
   </p>
 
