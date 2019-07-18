@@ -174,17 +174,39 @@ itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, 
 });
 
 itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
-  const subscribersNum = parseInt(req.body.subscribeNum, 10);
+  let subscribersNum = 0;
+  let { number } = req.body;
+  if (req.body.updateSubscribeNum) {
+    if (parseInt(req.body.updateSubscribeNum, 10) === 0) {
+      subscribersNum = 0;
+    } else {
+      subscribersNum = (parseInt(req.body.updateSubscribeNum, 10) - parseInt(req.body.number, 10));
+    }
+  }
+  if (req.body.subscribeNum) {
+    subscribersNum = parseInt(req.body.subscribeNum, 10);
+  }
   const itineraryID = req.params.id;
   Itinerary.findById(itineraryID)
     .then((singleItinerary) => {
-      Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum }, $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
+      Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
+        $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
         .then((() => {
-          User.updateOne({ _id: req.user._id }, { $push: { itineraries: { itinerary: itineraryID, number: subscribersNum } } })
-            .then(() => {
-              res.redirect(`/itinerary/itinerary/${itineraryID}`);
-            })
-            .catch(error => console.log(error));
+          User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
+
+          if (parseInt(req.body.updateSubscribeNum, 10) !== 0) {
+            User.updateOne({ _id: req.user._id }, { $addToSet: { itineraries: { itinerary: itineraryID, number } } })
+              .then(() => {
+                res.redirect(`/itinerary/itinerary/${itineraryID}`);
+              })
+              .catch(error => console.log(error));
+          } else {
+            User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
+              .then(() => {
+                res.redirect(`/itinerary/itinerary/${itineraryID}`);
+              })
+              .catch(error => console.log(error));
+          }
         }))
         .catch(err => console.log(err));
     })

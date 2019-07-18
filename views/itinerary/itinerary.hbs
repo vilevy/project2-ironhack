@@ -7,12 +7,13 @@ Description: {{itinerary.description}}<br><br>
 {{#if isSubs}}
   You have already subscribed for {{number}} people.<br>
   <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
-    <select name="subscribeNum" id="subscribeNum">
+    <select name="updateSubscribeNum" id="updateSubscribeNum">
         <option value="0">0</option>      
       {{#each remainingCapacityArr}}
         <option value="{{this}}">{{this}}</option>
       {{/each}}
     </select>
+    <input type="hidden" name="number" value="{{number}}">
     <button type="submit" id="subscribe-btn">Update</button>
   </form>
 {{/if}}
