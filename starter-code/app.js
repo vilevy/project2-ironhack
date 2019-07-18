@@ -50,7 +50,7 @@ app.use(flash());
 // express session
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 60000 },
+  // cookie: { maxAge: 60000 },
   resave: true,
   saveUninitialized: true,
   store: new MongoStore({

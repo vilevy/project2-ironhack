@@ -11,9 +11,10 @@ const itinerarySchema = new Schema({
   capacity: { type: Number, required: true },
   remainingCapacity: { type: Number, required: true },
   languages: { type: Array, required: true },
-  cathegories: Array,
+  categories: Array,
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
-  subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  // subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }, Number],
+  subscribers: [{ tourist: { type: Schema.Types.ObjectId, ref: 'User' }, number: Number }],
 },
 {
   timestamps: true,
