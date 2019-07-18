@@ -201,7 +201,7 @@ const searchCity = () => {
 
 window.onload = searchCity();
 
-
+// mapa com details
 /* function initMap2() {
   const map = new google.maps.Map(document.getElementById('map2'), {
     center: { lat: -33.866, lng: 151.196 },
@@ -235,3 +235,8 @@ window.onload = searchCity();
 
 window.onload = initMap2();
  */
+
+// const subscribeBtn = document.querySelector('#subscribe-btn');
+// subscribeBtn.addEventListener('click', () => {
+
+// });

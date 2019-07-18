@@ -9,12 +9,6 @@ const itineraryRoutes = express.Router();
 const passport = require('passport');
 const ensureLogin = require('connect-ensure-login');
 
-// const multer = require('multer');
-// const upload = multer({ dest: './public/uploads/' });
-
-// const bcrypt = require('bcrypt');
-// const bcryptSalt = 10;
-
 const User = require('../models/user');
 const Itinerary = require('../models/itinerary');
 
@@ -25,6 +19,33 @@ const checkUserLogged = () => (req, res, next) => {
   } else {
     res.redirect(`/auth/profile/${req.user._id}`);
   }
+};
+
+// function for checking role and continuing
+const checkRolesContinue = (userRole) => {
+  return (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === userRole) {
+      req.isRole = true;
+      next();
+    } else {
+      console.log('aquiii');
+      req.isRole = false;
+      next();
+    }
+  };
+};
+
+// function for checking role and redirecting
+const checkRolesRedirect = (userRole) => {
+  return (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === userRole) {
+      req.isRole = true;
+      next();
+    } else {
+      req.isRole = false;
+      res.redirect(`/auth/profile/${req.user.id}`);
+    }
+  };
 };
 
 const checkUserLoggedOwner = () => (req, res, next) => {
@@ -41,7 +62,7 @@ const checkUserLoggedOwner = () => (req, res, next) => {
 };
 
 // create itinerary
-itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, res, next) => {
+itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), checkRolesRedirect('guide'), (req, res, next) => {
   const googleKey = process.env.MAPS_KEY;
   const userID = req.user._id;
   const hours = [];
@@ -52,24 +73,24 @@ itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), (req, 
   for (let i = 0; i < 60; i += 15) {
     minutes.push(`${i}`.padStart(2, 0));
   }
-  const cathegories = ['Sports', 'Bars', 'Lgbt', 'Family']; 
+  const categories = ['Sports', 'Bars', 'Lgbt', 'Family']; 
   User.findById(userID)
     .then(((user) => {
-      res.render('itinerary/create', { user, hours, minutes, cathegories, googleKey });
+      res.render('itinerary/create', { user, hours, minutes, categories, googleKey });
     }))
     .catch(err => console.log(err));
 });
 
 
 itineraryRoutes.post('/create', (req, res, next) => {
-  const { name, city, description, capacity, languages, cathegories, place } = req.body;
+  const { name, city, description, capacity, languages, categories, place } = req.body;
   let { date } = req.body;
   dateDay = new Date(date).getDate() + 1;
   dateMonth = new Date(date).getMonth() + 1;
   dateYear = new Date(date).getFullYear();
   date = `${dateDay}/${dateMonth}/${dateYear}`;
   const owner = req.user._id;
-  if (name === '' || city === '' || date === '' || description === '' || capacity === '' || languages === '' || cathegories === '' || place === '') {
+  if (name === '' || city === '' || date === '' || description === '' || capacity === '' || languages === '' || categories === '' || place === '') {
     res.render('itinerary/create', { message: 'Please, fill all required fields.' });
     return;
   }
@@ -105,16 +126,15 @@ itineraryRoutes.post('/create', (req, res, next) => {
     capacity,
     remainingCapacity: capacity,
     languages,
-    cathegories,
+    categories,
     places: placesObjArr,
     owner,
   });
-
   newItinerary.save((err) => {
     if (err) {
       res.send(err);
     } else {
-      User.updateOne({ _id: owner }, { $push: { itineraries: newItinerary._id } })
+      User.updateOne({ _id: owner }, { $push: { itineraries: { itinerary: newItinerary._id, number: 0} } })
         .then(() => {
           res.redirect(`/auth/profile/${req.user._id}`);
         })
@@ -123,30 +143,52 @@ itineraryRoutes.post('/create', (req, res, next) => {
   });
 });
 
-// function for checking role
-const checkRoles = (userRole) => {
-  return (req, res, next) => {
-    if (req.isAuthenticated() && req.user.role === userRole) {
-      req.isRole = true;
-      next();
-    } else {
-      req.isRole = false;
-      next();
-      // res.redirect('/auth/login');
-    }
-  };
-};
-
 // view each itinerary
-itineraryRoutes.get('/itinerary/:id', checkRoles('tourist'), (req, res, next) => {
+itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
   const { user } = req;
   const { isRole } = req;
   const itineraryID = req.params.id;
   Itinerary.findById(itineraryID)
     .then(((itinerary) => {
-      res.render('itinerary/itinerary', { itinerary, user, isRole });
+      let isSubs = false;
+      let number = 0;
+      if (user) {
+        user.itineraries.forEach(((el) => {
+          if (JSON.stringify(el.itinerary._id) === JSON.stringify(itineraryID) && user.role === 'tourist') {
+            isSubs = true;
+            number = el.number;
+          }
+        }));
+      }
+      let availableSubscribe = false;
+      if (itinerary.remainingCapacity > 0) {
+        availableSubscribe = true;
+      }
+      const remainingCapacityArr = [];
+      for (let i = 1; i <= itinerary.remainingCapacity; i += 1) {
+        remainingCapacityArr.push(i);
+      }
+      res.render('itinerary/itinerary', { itinerary, user, remainingCapacityArr, isRole, isSubs, availableSubscribe, number });
     }))
     .catch(err => console.log(err));
+});
+
+itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
+  const subscribersNum = parseInt(req.body.subscribeNum, 10);
+  const itineraryID = req.params.id;
+  Itinerary.findById(itineraryID)
+    .then((singleItinerary) => {
+      Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum }, $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
+        .then((() => {
+          User.updateOne({ _id: req.user._id }, { $push: { itineraries: { itinerary: itineraryID, number: subscribersNum } } })
+            .then(() => {
+              res.redirect(`/itinerary/itinerary/${itineraryID}`);
+            })
+            .catch(error => console.log(error));
+        }))
+        .catch(err => console.log(err));
+    })
+    .catch(error => console.log(error));
 });
 
 // edit itinerary

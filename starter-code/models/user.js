@@ -14,7 +14,8 @@ const userSchema = new Schema({
   interests: Array,
   about: String,
   profileImg: { type: String, default: 'images/default-avatar.png' },
-  itineraries: [{ type: Schema.Types.ObjectId, ref: 'Itinerary' }],
+  itineraries: [{ itinerary: { type: Schema.Types.ObjectId, ref: 'Itinerary' }, number: Number }],
+
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
 },
 {

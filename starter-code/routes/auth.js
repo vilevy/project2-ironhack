@@ -160,14 +160,18 @@ const checkUserLogged = () => (req, res, next) => {
   }
 };
 
-
 // profile
 authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLogged(), (req, res, next) => {
   const userID = req.params.id;
+  let isGuide = false;
   User.findById(userID)
-    .populate('itineraries')
-    .then(((user) => {
-      res.render('auth/profile', user);
+    .populate('itineraries.itinerary')
+    .then(((userFound) => {
+      if (req.user.role === 'guide') {
+        isGuide = true;
+      }
+      console.log(isGuide);
+      res.render('auth/profile', { userFound, isGuide });
     }))
     .catch(err => console.log(err));
 });

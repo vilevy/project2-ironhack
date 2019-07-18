@@ -50,7 +50,7 @@ app.use(flash());
 // express session
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  cookie: { maxAge: 60000 },
+  // cookie: { maxAge: 60000 },
   resave: true,
   saveUninitialized: true,
   store: new MongoStore({
@@ -81,8 +81,6 @@ passport.use(new LocalStrategy({
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return next(null, false, { message: 'Incorrect username or password' });
     }
-    console.log('session:', user);
-
     return next(null, user);
   });
 }));

@@ -1,9 +1,41 @@
-{{itinerary.name}}<br>
-{{itinerary.description}}<br>
+Name: {{itinerary.name}}<br><br>
+Description: {{itinerary.description}}<br><br>
 {{#each itinerary.places}}
   {{this.name}} - {{this.hours}}:{{this.minutes}}<br>
-{{/each}}
+{{/each}}<br>
+
+{{#if isSubs}}
+  You have already subscribed for {{number}} people.<br>
+  <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+    <select name="subscribeNum" id="subscribeNum">
+        <option value="0">0</option>      
+      {{#each remainingCapacityArr}}
+        <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
+    <button type="submit" id="subscribe-btn">Update</button>
+  </form>
+{{/if}}
+<br>
+Capacity: {{itinerary.capacity}}
+<br>
+Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
 
 {{#if isRole}}
-  <p>Subscribe</p>
+  {{#if availableSubscribe}}
+    {{#unless isSubs}}
+      <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+        <select name="subscribeNum" id="subscribeNum">
+          {{#each remainingCapacityArr}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+        <button type="submit" id="subscribe-btn">Subscribe</button>
+      </form>
+    {{/unless}}
+    {{else}}
+      No available places remaining.
+  {{/if}}
 {{/if}}
+
+<script src="/js/script.js"></script>
