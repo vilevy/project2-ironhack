@@ -6,13 +6,13 @@ Through the platform, anyone can register as a guide, set up a tourist itinerary
 
 The tourist, in turn, has the opportunity to experience the visited city in a different way from those offered by the traditional city tours, since they will have the chance to know the city from the point of view of a local citizen.
 
-## Developers
+## Developers:
 
 Marcus Felipe Ferreira Brandão
 
 Victor Levy Gomes Pinto
 
-## Usage
+## Used technologies:
 
 - Javascript
 - HTML
