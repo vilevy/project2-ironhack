@@ -73,7 +73,7 @@ itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), checkR
   for (let i = 0; i < 60; i += 15) {
     minutes.push(`${i}`.padStart(2, 0));
   }
-  const categories = ['Sports', 'Bars', 'Lgbt', 'Family']; 
+  const categories = ['Arts', 'Bar & Nightlife', 'Beliefs', 'Career & Business', 'Cars & Vehicles', 'Dance', 'Family', 'Fashion & Beauty', 'Food & Drink', 'LGBTQ', 'Language & Culture', 'Learning & Courses', 'Music', 'Outdoors & Adventure', 'Pets',  'Photography', 'Shopping', 'Social', 'Sports & Fitness', 'Tech']; 
   User.findById(userID)
     .then(((user) => {
       res.render('itinerary/create', { user, hours, minutes, categories, googleKey });
@@ -116,6 +116,8 @@ itineraryRoutes.post('/create', (req, res, next) => {
       minutes: placeArrSplit[1],
       name: placeArrSplit[2],
       id: placeArrSplit[3],
+      lat: placeArrSplit[4],
+      long: placeArrSplit[5], 
     };
     placesObjArr.push(placeObj);
   }
@@ -153,6 +155,7 @@ itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, 
   let number = 0;
   const itineraryID = req.params.id;
   let isSubs = false;
+
   // if user have already subscribed, set isSubs to true and get number of members
   Itinerary.findById(itineraryID)
     .populate('owner')
@@ -243,70 +246,9 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
     .catch(err => console.log(err));
 });
 
-// itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
-//   let subscribersNum = 0;
-//   let { number } = req.body;
-//   if (req.body.updateSubscribeNum) {
-//     if (parseInt(req.body.updateSubscribeNum, 10) === 0) {
-//       subscribersNum = 0;
-//     } else {
-//       subscribersNum = (parseInt(req.body.updateSubscribeNum, 10) - parseInt(req.body.number, 10));
-//     }
-//   }
-//   if (req.body.subscribeNum) {
-//     subscribersNum = parseInt(req.body.subscribeNum, 10);
-//   }
-//   const itineraryID = req.params.id;
-//   Itinerary.findById(itineraryID)
-//     .then((singleItinerary) => {
-//       Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
-//         $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
-//         .then((() => {
-//           User.updateOne({ _id: req.user._id }, { $pull: { itineraries: itineraryID } });
-
-//           if (parseInt(req.body.updateSubscribeNum, 10) !== 0) {
-//             User.updateOne({ _id: req.user._id }, { $addToSet: { itineraries: { itinerary: itineraryID, number } } })
-//               .then(() => {
-//                 res.redirect(`/itinerary/itinerary/${itineraryID}`);
-//               })
-//               .catch(error => console.log(error));
-//           } else {
-//             User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
-//               .then(() => {
-//                 res.redirect(`/itinerary/itinerary/${itineraryID}`);
-//               })
-//               .catch(error => console.log(error));
-//           }
-//         }))
-//         .catch(err => console.log(err));
-//     })
-//     .catch(error => console.log(error));
-// });
-
-
-// edit itinerary
-// itineraryRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLoggedOwner(), (req, res, next) => {
-//   const itineraryID = req.params.id;
-//   Itinerary.findById(itineraryID)
-//     .then(((itinerary) => {
-//       res.render('itinerary/edit', { itinerary });
-//     }))
-//     .catch(err => console.log(err));
-// });
-
-
-
-// find
-
-
-// itineraryRoutes.get('/search'), (req, res, next) => {
-
-// }
-
 itineraryRoutes.post(('/search'), (req, res, next) => {
   let { city, categories, dateFrom, dateTo } = req.body;
   const user = req.user;
-  console.log('before: ', dateTo);
   dateFromDay = new Date(dateFrom).getDate();
   dateFromMonth = new Date(dateFrom).getMonth() + 1;
   dateFromYear = new Date(dateFrom).getFullYear();
@@ -318,9 +260,8 @@ itineraryRoutes.post(('/search'), (req, res, next) => {
   dateTo = `${dateToDay}/${dateToMonth}/${dateToYear}`;
 
   console.log(dateTo);
-
   if (categories === undefined) {
-    categories = ['Sports', 'Bars', 'Restaurants'];
+    categories = ['Arts', 'Bar & Nightlife', 'Beliefs', 'Career & Business', 'Cars & Vehicles', 'Dance', 'Family', 'Fashion & Beauty', 'Food & Drink', 'LGBTQ', 'Language & Culture', 'Learning & Courses', 'Music', 'Outdoors & Adventure', 'Pets',  'Photography', 'Shopping', 'Social', 'Sports & Fitness', 'Tech'];
   }
 
   Itinerary.find({ $and: [{ city }, { categories: { $in: categories } }] })
@@ -331,12 +272,15 @@ itineraryRoutes.post(('/search'), (req, res, next) => {
     .catch(err => console.log(err));
 });
 
-// itineraryRoutes.get(('/getplaces'), (req, res, next) => {
-//   const itineraryID = req.params.id;
-//   Itinerary.findById(itineraryID)
-//     .then((itinerary) => {
-      
-//     })
-// });
+
+itineraryRoutes.get('/api/:id', (req, res, next) => {
+  Itinerary.find({ _id: req.params.id })
+    .then((places) => {
+      res.status(200).json({ places });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
 
 module.exports = itineraryRoutes;

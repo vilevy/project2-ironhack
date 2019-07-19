@@ -1,57 +1,102 @@
-<h2>Edit profile</h2>
+<nav>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+    <span id="hamburger"><b>MENU</b></span>
+  </div>
+  <div class="nav-right">
+    <ul id="lista">
+      <li><a href="/">Search</a></li>
+      {{#if user}}
+      <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+      <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+      <li><a href="/auth/guide-signup">Become a guide</a></li>
+      <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+      <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+<main class="content-container">
 
-<form action="/auth/edit/{{user._id}}" method="POST" enctype="multipart/form-data">
-  <input type="hidden" name="role" value="guide">
-  <p>Username: {{user.username}}</p>
-  <label for="name">Full name:</label>
-  <input id="name" type="text" name="name" value="{{user.name}}" required>
-  <br><br>
-  <label for="birthDate">Birth Date*:</label>
-  <select name="birthDateDay" required>
-    <option value="" disabled>Day</option>
-    {{#if user.birthDate.day}}
-      <option value="{{user.birthDate.day}}" selected>{{user.birthDate.day}}</option>
-    {{/if}}
-    {{#each days}}
-        <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <select name="birthDateMonth" required>
-    <option value="" disabled>Month</option>
-    {{#if user.birthDate.month}}
-      <option value="{{user.birthDate.month}}" selected>{{user.birthDate.month}}</option>
-    {{/if}}
-    {{#each months}}
-        <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <select name="birthDateYear" required>
-    <option value="" disabled>Year</option>
-    {{#if user.birthDate.year}}
-      <option value="{{user.birthDate.year}}" selected>{{user.birthDate.year}}</option>
-    {{/if}}
-    {{#each years}}
-      <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <br><br>
-  <label for="phone">Phone:</label>
-  <input type="tel" name="phone" value="{{user.phone}}" required>
-  <br><br>
-  <label for="email">E-mail:</label>
-  <input id="email" type="text" name="email" value="{{user.email}}" required>
-  <br><br>
-  <p>Chosse the languages you speak:<br>
-    {{#each user.languages}}
-    <input type="checkbox" name="languages" value="{{this}}" checked>{{this}}
-    {{/each}}
+  <h2>Edit profile</h2>
 
-    {{#each allLanguages}}
-    <input type="checkbox" name="languages" value="{{this}}">{{this}}
-    {{/each}}
-  </p>
-  <br><br>
-  {{!-- <p>Interests:<br>
+  <form action="/auth/edit/{{user._id}}" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="role" value="guide">
+    <p id="fixed-username">Username: {{user.username}}</p>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">FULL NAME</label>
+      <input class="where-input search-form-text-input" type="text" id="Where" name="name" value="{{user.name}}"
+        required />
+    </div>
+    <div class="search-date">
+      <label class="search-form-fields mt2" for="birthDateDay">BIRTH DATE</label>
+      <select name="birthDateDay" required>
+        <option value="" disabled>Day</option>
+        {{#if user.birthDate.day}}
+        <option value="{{user.birthDate.day}}" selected>{{user.birthDate.day}}</option>
+        {{/if}}
+        {{#each days}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+      <select name="birthDateMonth" required>
+        <option value="" disabled>Month</option>
+        {{#if user.birthDate.month}}
+        <option value="{{user.birthDate.month}}" selected>{{user.birthDate.month}}</option>
+        {{/if}}
+        {{#each months}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+      <select name="birthDateYear" required>
+        <option value="" disabled>Year</option>
+        {{#if user.birthDate.year}}
+        <option value="{{user.birthDate.year}}" selected>{{user.birthDate.year}}</option>
+        {{/if}}
+        {{#each years}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">PHONE</label>
+      <input class="where-input search-form-text-input" type="text" id="phone" name="phone" value="{{user.phone}}"
+        required />
+    </div>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">E-MAIL</label>
+      <input class="where-input search-form-text-input" type="text" id="e-mail" name="email" value="{{user.email}}"
+        required />
+    </div>
+    <label class="search-form-fields mt2" for="languages">LANGUAGES</label>
+    <p>Choose the languages you speak:<br>
+      {{#each user.languages}}
+      <div class="categories-checkbox">
+        <input id="languages-{{this}}" type="checkbox" name="languages" value="{{this}}"
+          checked><label for="languages-{{this}}">
+          {{this}}</label>
+      </div>
+      {{/each}}
+
+      {{#each allLanguages}}
+      <div class="categories-checkbox">
+        <input id="languages-{{this}}" type="checkbox" name="languages" value="{{this}}" value="{{this}}"><label
+          for="languages-{{this}}">
+          {{this}}</label>
+      </div>
+      {{/each}}
+    </p>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="about">ABOUT ME</label>
+      <p class="guide-about-me">
+        Use this field to talk more about yourself, your proficiency levels in the selected languages, your
+        profession, hobbies, the links of your social medias or any information you want to share about
+        yourself.
+      </p>
+      <textarea class="signup-guide-text-area" name="about">{{user.about}}</textarea>
+    </div>
+    {{!-- <p>Interests:<br>
     {{#each user.interests}}
     <input type="checkbox" name="interests" value="{{this}}" checked>{{this}}
     {{/each}}
@@ -60,32 +105,27 @@
     <input type="checkbox" name="interests" value="{{this}}">{{this}}
     {{/each}}
   </p> --}}
+    <div class="picture">
+      <label class="search-form-fields mt2" id="fileLabel" for="profile-picture">PROFILE PICTURE</label>
+      <img src="{{user.profileImg}}" alt="{{user.name}} profile picture" width="300">
+      <input type="hidden" name="oldProfileImg" value="{{user.profileImg}}">
+      <input id="profile-picture" type="file" name="profileImg">
+    </div>
+    <div class="search-where">
+        <label class="search-form-fields mt2" for="password">PASSWORD</label>
+        <input type="hidden" name="oldPassword" value="{{user.password}}">
+        <input class="where-input search-form-text-input" type="text" id="password" name="password" />
+      </div>
 
+    {{#if message}}
+    <div>{{ message }}</div>
+    {{/if}}
 
-  <label for="about">About me:</label>
-  <p>This field is...</p>
-  <textarea name="about" id="about" cols="50" rows="10">{{user.about}}</textarea>
+    <button id="create-account-button" class="search-btn" href="#">Save changes</button>
 
-  <br><br>
-  <label for="profileImg">Profile picture:</label>
-  <img src="{{user.profileImg}}" alt="{{user.name}} profile picture" width="300">
-  <input type="hidden" name="oldProfileImg" value="{{user.profileImg}}">
-  <input type="file" name="profileImg">
-
-  <br><br>
-  <label for="password">Password:</label>
-  <input type="hidden" name="oldPassword" value="{{user.password}}">
-  <input type="password" name="password">
-
-  {{#if message}}
-  <div>{{ message }}</div>
-  {{/if}}
-
-  <br><br>
-  <button>Save changes</button>
-
-  {{!-- <p class="account-message">
+    {{!-- <p class="account-message">
     Do you already have an account?
     <a href="/auth/guide-login">Login</a>
   </p> --}}
-</form>
+  </form>
+</main>

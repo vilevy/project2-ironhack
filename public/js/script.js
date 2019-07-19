@@ -1,3 +1,6 @@
+
+
+
 let lat = '';
 let long = '';
 const addBtn = document.querySelector('#add-place');
@@ -29,8 +32,10 @@ addBtn.addEventListener('click', () => {
   }
 
   if (checkTime) {
+    // document.querySelector('#close-modal'.style.display = 'block');
     document.querySelector('#alert-message').innerHTML = 'Time already taken!';
     document.querySelector('#alert-message').style.display = 'flex';
+    document.querySelector('#close-modal').style.display = 'block';
   } else {
     placesArr.push({
       hours: hours.value,
@@ -128,8 +133,8 @@ const initMap = () => {
     const place = autocomplete.getPlace();
     placeId = place.place_id;
     placeName = place.name;
-    lat = place.geometry.viewport.na.j;
-    long = place.geometry.viewport.ga.j;
+    lat = place.geometry.location.lat();
+    long = place.geometry.location.lng();
     if (!place.geometry) {
       // User entered the name of a Place that was not suggested and
       // pressed the Enter key, or the Place Details request failed.
@@ -247,3 +252,11 @@ window.onload = initMap2();
 // subscribeBtn.addEventListener('click', () => {
 
 // });
+
+const closeModal = document.querySelector('#close-modal');
+
+closeModal.addEventListener('click', () => {
+  closeModal.style.display = 'none';
+  document.querySelector('#alert-message').innerHTML = '';
+  document.querySelector('#alert-message').style.display = 'none';
+});

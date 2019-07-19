@@ -1,7 +1,11 @@
 <nav>
-  <div class="nav-left"><h2><a href="/">Voluntouring</a></h2></div>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+    <span id="hamburger"><b>MENU</b></span>
+  </div>
   <div class="nav-right">
-    <ul>
+    <ul id="lista">
+      <li><a href="/">Search</a></li>
       {{#if user}}
         <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
         <li><a href="/auth/logout">Logout</a></li>
@@ -17,7 +21,7 @@
 <div id="cover">
   <main class="content-container">
     <form action="/itinerary/search" method="POST" class="search-form">
-      <h2>Find unique tourist itineraries created by volunteer guides who live in the city.</h2>
+      <h2>Find unique touristic itineraries created by volunteer guides who live in the city.</h2>
       <div class="search-where">
         <label class="search-form-fields" for="where">WHERE</label>
         <input class="where-input search-form-text-input" type="text" id="city-search" name="city" required/>
