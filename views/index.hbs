@@ -1,22 +1,142 @@
-<a href="/auth/guide-signup">Become a guide</a><br>
-<a href="/auth/tourist-signup">Sign up</a><br>
-<a href="/auth/login">Login</a>
+<nav>
+  <div class="nav-left"><h2><a href="/">Voluntouring</a></h2></div>
+  <div class="nav-right">
+    <ul>
+      {{#if user}}
+        <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+        <li><a href="/auth/guide-signup">Become a guide</a></li>
+        <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+        <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
 
+<div id="cover">
+  <main class="content-container">
+    <form action="/itinerary/search" method="POST" class="search-form">
+      <h2>Find unique tourist itineraries created by volunteer guides who live in the city.</h2>
+      <div class="search-where">
+        <label class="search-form-fields" for="where">WHERE</label>
+        <input class="where-input search-form-text-input" type="text" id="city-search" name="city" required/>
+      </div>
+      <div class="search-date">
+        <label class="search-form-fields" for="from">FROM</label>
+        <input class="search-form-text-input" type="date" id="from" name="dateFrom" />
+      </div>
+      <div class="search-date">
+        <label class="search-form-fields" for="until">UNTIL</label>
+        <input class="search-form-text-input" type="date" id="until" name="dateTo" />
+      </div>
 
-<form action="/itinerary/search" method="POST">
-  <label for="city">City:</label>
-  <input type="text" name="city" id="city-search" required>
-  <label for="">From</label>
-  <input type="date" name="dateFrom">
-  <label for="">To</label>
-  <input type="date" name="dateTo">
-  <input type="checkbox" name="categories" value="Sports">Sports
-  <input type="checkbox" name="categories" value="Bars">Bars
-  <input type="checkbox" name="categories" value="Restaurant">Restaurant
-  <button type="sumbit">Search</button>
-</form>
+        <div class="categories-checkbox-container">
+          <p class="search-form-fields">CATEGORIES</p>
+          <div class="categories-checkbox">
+            <input id="categories-arts" type="checkbox" name="categories" value="arts"><label for="categories-arts">
+              Arts</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-bar" type="checkbox" name="categories" value="bar"><label for="categories-bar"> Bar &
+              Nightlife</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-beliefs" type="checkbox" name="categories" value="beliefs"><label
+              for="categories-beliefs"> Beliefs</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-career" type="checkbox" name="categories" value="career"><label
+              for="categories-career">
+              Career & Business</label>
+          </div>
+          <div class="categories-checkbox"><input id="categories-cars" type="checkbox" name="categories"
+              value="cars"><label for="categories-cars"> Cars & Vehicles</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-dance" type="checkbox" name="categories" value="dance"><label for="categories-dance">
+              Dance</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-family" type="checkbox" name="categories" value="family"><label
+              for="categories-family">
+              Family</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-fashion" type="checkbox" name="categories" value="fashion"><label
+              for="categories-fashion"> Fashion & Beauty</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-food" type="checkbox" name="categories" value="food"><label for="categories-food">
+              Food
+              & Drink</label>
+          </div>
+          <div class="categories-checkbox"><input id="categories-lgbtq" type="checkbox" name="categories"
+              value="lgbtq"><label for="categories-lgbtq"> LGBTQ</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-language" type="checkbox" name="categories" value="language"><label
+              for="categories-language"> Language & Culture</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-learning" type="checkbox" name="categories" value="learning"><label
+              for="categories-learning"> Learning & Courses</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-music" type="checkbox" name="categories" value="music"><label for="categories-music">
+              Music</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-outdoors" type="checkbox" name="categories" value="outdoors"><label
+              for="categories-outdoors"> Outdoors & Adventure</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-pets" type="checkbox" name="categories" value="pets"><label for="categories-pets">
+              Pets</label></div>
+          <div class="categories-checkbox">
+            <input id="categories-photography" type="checkbox" name="categories" value="photography"><label
+              for="categories-photography"> Photography</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-shopping" type="checkbox" name="categories" value="shopping"><label
+              for="categories-shopping"> Shopping</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-social" type="checkbox" name="categories" value="social"><label
+              for="categories-social">
+              Social</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-sports" type="checkbox" name="categories" value="sports"><label
+              for="categories-sports">
+              Sports & Fitness</label>
+          </div>
+          <div class="categories-checkbox">
+            <input id="categories-tech" type="checkbox" name="categories" value="tech"><label for="categories-tech">
+              Tech</label>
+          </div>
+        </div>
 
+        <button class="search-btn" type="sumbit">Search</button>
+    </form>
+  </main>
+</div>
 
-<script
-  src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
+<section id="about">
+  <h3>About Us</h3>
+  <p>Voluntouring is a digital platform that unites people who are passionate about other languages ​​and cultures in
+    a fun way.
+    <p> Through the platform, anyone can register as a guide, set up a tourist itinerary focusing on different
+      categories
+      of their interest, such as history, arts, music, sports, among others, and take a group of tourists to have fun
+      with then at events of these categories.
+    </p>
+    <p> The tourist, in turn, has the opportunity to experience the visited city in a different way from those offered
+      by
+      the traditional city tours, since they will have the chance to know the city from the point of view of a
+      local citizen.
+    </p>
+</section>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
 <script src="/js/script2.js"></script>

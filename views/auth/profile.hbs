@@ -1,25 +1,80 @@
-{{!-- {{message}} não tá passando message --}}
-<img src="{{userFound.profileImg}}" alt="{{userFound.name}} profile picture" width="300">
-<h2>Welcome, {{userFound.name}}</h2>
-{{userFound.role}}<br>
-{{userFound.username}}<br>
-{{userFound.birthDate.day}}/{{userFound.birthDate.month}}/{{userFound.birthDate.year}}<br>
-{{userFound.phone}}<br>
-{{userFound.email}}<br>
-{{userFound.languages}}<br>
-{{userFound.interests}}<br>
-{{userFound.about}}<br>
-{{#if isGuide}}
-  <a href="/itinerary/create">Create Itinerary</a>
-{{/if}}
-<a href="/auth/edit/{{userFound._id}}">Edit profile</a>
-<a href="/auth/logout">Logout</a>
-<br>
-<h2>My itineraries</h2>
-{{#each userFound.itineraries}}
-  {{name}} - {{city}} - {{date}} - <a href="/itinerary/itinerary/{{_id}}">View</a><br>
-  {{#if ../isGuide}}
-    <a href="/itinerary/edit/{{_id}}">Edit</a><br>
-    <button id="deleteBtn-{{_id}}">Delete</button>
+<nav>
+  <div class="nav-left"><h2><a href="/">Voluntouring</a></h2></div>
+  <div class="nav-right">
+    <ul>
+      <li><a href="/">Search</a></li>
+      {{#if user}}
+        <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+        <li><a href="/auth/guide-signup">Become a guide</a></li>
+        <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+        <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+
+<main class="content-container">
+  <div class="profile-header">
+    <img src="{{userFound.profileImg}}" alt="{{userFound.name}} profile picture">
+    <h3>{{userFound.name}}</h3>
+  </div>
+  {{!-- {{userFound.role}}<br>
+  {{userFound.username}}<br>
+  {{userFound.birthDate.day}}/{{userFound.birthDate.month}}/{{userFound.birthDate.year}}<br>
+  {{userFound.phone}}<br>
+  {{userFound.email}}<br>
+  {{userFound.languages}}<br>
+  {{userFound.interests}}<br>
+  {{userFound.about}}<br> --}}
+  <div class="profile-actions">
+    {{#if isGuide}}
+      <a href="/itinerary/create" class="create-btn">Create Itinerary</a>
+    {{/if}}
+    {{#if isUser}}
+    <a href="/auth/edit/{{userFound._id}}">Edit profile</a>
+    {{/if}}
+  </div>
+  {{#if isUser}}
+    <h2>My itineraries</h2>
+  {{else}}
+    <h2>User's itineraries</h2>
   {{/if}}
-{{/each}}
+  {{!-- {{#each userFound.itineraries}}
+    {{name}} - {{city}} - {{date}} - <a href="/itinerary/itinerary/{{_id}}">View</a><br>
+    {{#if ../isGuide}}
+      <a href="/itinerary/edit/{{_id}}">Edit</a><br>
+      <button id="deleteBtn-{{_id}}">Delete</button>
+    {{/if}}
+  {{/each}} --}}
+  {{#each userFound.itineraries}}
+    <article class="search-itinerary">
+      <div class="search-itinerary-heading">
+        <h2>{{name}}</h2>
+        {{#unless isGuide}}
+          <a href="/auth/profile/{{owner._id}}">
+            <div class="search-owner-info">
+              {{!-- <p class="search-owner-name">{{owner.username}}</p>
+              <img src="{{owner.profileImg}}" alt="{{owner.username}} profile picture" class="search-profile-image"> --}}
+            </div>
+          </a>
+        {{/unless}} 
+        {{#if isGuide}}
+          <p>{{remainingCapacity}} places remaining</p>
+        {{/if}}
+      </div>
+      <h3 class="search-local-info">{{city}} - {{date}}</h3>
+      <div class="search-categories">
+        {{#each categories}}
+          <p class="search-categories-item">{{this}} |</p>
+        {{/each}}
+      </div>
+      {{#each places}}
+        <p>{{hours}}h{{minutes}} | {{name}}</p>
+      {{/each}}
+      <a href="/itinerary/itinerary/{{id}}" class="search-see-more">View more</a>
+    </article>
+  {{/each}}
+</main>
+

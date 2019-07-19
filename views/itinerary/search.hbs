@@ -1,6 +1,37 @@
-Results:
-{{#each results}}
-  {{this.name}}<br>
-  {{this.city}}<br>
-  {{this.date}}
-{{/each}}
+<nav>
+  <div class="nav-left"><h2><a href="/">Voluntouring</a></h2></div>
+  <div class="nav-right">
+    <ul>
+      {{#if user}}
+        <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+        <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+        <li><a href="/auth/guide-signup">Become a guide</a></li>
+        <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+        <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+<main class="content-container">
+  <h1 class="search-results-title">Results:</h1>
+  {{#each results}}
+    <article class="search-itinerary">
+      <div class="search-itinerary-heading">
+        <h2>{{name}}</h2>
+        <a href="/auth/profile/{{owner._id}}">
+          <div class="search-owner-info">
+            <p class="search-owner-name">{{owner.username}}</p>
+            <img src="{{owner.profileImg}}" alt="{{owner.username}} profile picture" class="search-profile-image">
+          </div>
+        </a>
+      </div>
+      <h3 class="search-local-info">{{city}} - {{date}}</h3>
+      <p class="search-categories">{{categories}}</p>
+      {{#each places}}
+        <p>{{hours}}h{{minutes}} | {{name}}</p>
+      {{/each}}
+      <a href="/itinerary/itinerary/{{id}}" class="search-see-more">View more</a>
+    </article>
+  {{/each}}
+</main>

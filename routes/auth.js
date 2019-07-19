@@ -161,17 +161,21 @@ const checkUserLogged = () => (req, res, next) => {
 };
 
 // profile
-authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLogged(), (req, res, next) => {
+authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), (req, res, next) => {
   const userID = req.params.id;
   let isGuide = false;
+  const { user } = req;
+  let isUser = false;
+  if (user) {
+    if (JSON.stringify(user._id) === JSON.stringify(userID)) isUser = true;
+  }
   User.findById(userID)
     .populate('itineraries')
     .then(((userFound) => {
       if (req.user.role === 'guide') {
         isGuide = true;
       }
-      console.log(isGuide);
-      res.render('auth/profile', { userFound, isGuide });
+      res.render('auth/profile', { userFound, isGuide, user, isUser });
     }))
     .catch(err => console.log(err));
 });
@@ -183,7 +187,7 @@ authRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUser
   User.findById(userID)
     .then(((user) => {
       // COLOCAR LISTA DE TODAS AS LÍNGUAS DO SIGNUP
-      const allLanguages = ['Portuguese', 'Spanish', 'English', 'Catalan', 'Deutch'];
+      const allLanguages = ['Arabic', 'Dutch', 'English', 'French', 'German', 'Greek', 'Hindi', 'Italian', 'Japanese', 'Korean', 'Mandarin', 'Portuguese', 'Russian', 'Spanish', 'Turkish'];
       if (user.languages) {
         for (let i = 0; i < allLanguages.length; i += 1) {
           for (let j = 0; j < user.languages.length; j += 1) {
@@ -194,7 +198,7 @@ authRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUser
         }
       }
       // COLOCAR LISTA DE TODAS OS INTERESSES
-      const allInterests = ['Sports', 'Bars', 'Party', 'Cars', 'Children'];
+      const allInterests = ['Arts', 'Bar & Nightlife', 'Beliefs', 'Career & Business', 'Cars & Vehicles', 'Dance', 'Family', 'Fashion & Beauty', 'Food & Drink', 'LGBTQ', 'Language & Culture', 'Learning & Courses', 'Music', 'Outdoors & Adventure', 'Pets',  'Photography', 'Shopping', 'Social', 'Sports & Fitness', 'Tech'];
       if (user.interests) {
         for (let i = 0; i < allInterests.length; i += 1) {
           for (let j = 0; j < user.interests.length; j += 1) {

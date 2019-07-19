@@ -1,22 +1,31 @@
+<nav>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+  </div>
+  <div class="nav-right">
+    <ul>
+      <li><a href="/">Search</a></li>
+      <li><a href="/auth/guide-signup">Become a guide</a></li>
+      <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+    </ul>
+  </div>
+</nav>
+
 <h2>Login</h2>
 
-<form action="/auth/login" method="POST">
-  <label for="name">Username:</label>
-  <input id="name" type="text" name="username" required>
-  <br><br>
-  <label for="password">Password:</label>
-  <input type="password" name="password" required>
+<div id="bg-login">
+  <main class="content-container">
+    <form action="/auth/login" method="POST" class="login-form">
+      <label for="username" class="search-form-fields center">USERNAME:</label>
+      <input id="username" type="text" name="username" class="search-form-text-input login-input" required>
+      <label for="password" class="search-form-fields center">PASSWORD:</label>
+      <input type="password" name="password" class="search-form-text-input login-input" required>
 
-  {{#if message}}
-    <div>{{ message }}</div>
-  {{/if}}
+      {{#if message}}
+      <p class="error-message">{{ message }}</p>
+      {{/if}}
 
-  <br><br>
-  <button>Login</button>
-  <br><br>
-  <p class="account-message">
-    Don't you have an account yet?<br>
-    <a href="/auth/guide-signup">Become a guide</a><br>
-    <a href="/auth/tourist-signup">Sign up</a>
-  </p>
-</form>
+      <button type="submit" class="search-btn">Login</button>
+    </form>
+  </main>
+</div>

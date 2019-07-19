@@ -1,82 +1,103 @@
-<h2>Create new itinerary</h2>
+<nav>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+  </div>
+  <div class="nav-right">
+    <ul>
+      {{#if user}}
+      <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+      <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+      <li><a href="/auth/guide-signup">Become a guide</a></li>
+      <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+      <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
 
-<form class="form-full" action="/itinerary/create" method="POST" id="create-itinerary-form">
-  <label for="name">Itinerary name:</label>
-  <input id="name" type="text" name="name" placeholder="Itinerary name" required>
-  <br><br>
-  <label for="city">City:</label>
-  <input type="text" name="city" id="city-search" required>
-  <br><br>
-  <label for="birthDate">Date:</label>
-  <input type="date" name="date" required>
-  <br><br>
-  <label for="description">Description:</label>
-  <p>This field is...</p>
-  <textarea name="description" id="description" cols="150" rows="7"></textarea>
-  <br><br>
-  <label for="capacity">Capacity:</label>
-  <input type="text" name="capacity" placeholder="ex.: 10" required>
 
-  <p>Itinerary languages:<br>
+<main class="content-container">
+
+  <h2>Create new itinerary</h2>
+
+  <form class="form-full" action="/itinerary/create" method="POST" id="create-itinerary-form">
+    <label for="name" class="search-form-fields">ITINERARY NAME:</label>
+    <input id="name" type="text" name="name" placeholder="Itinerary name" class="search-form-text-input" required>
+    <label for="city" class="search-form-fields">CITY:</label>
+    <input type="text" name="city" id="city-search" class="search-form-text-input" required>
+    <label for="birthDate" class="search-form-fields">DATE:</label>
+    <input type="date" name="date" class="search-form-text-input" required>
+    <label for="description" class="search-form-fields">DESCRIPTION:</label>
+    <p>This field is...</p>
+    <textarea name="description" id="description" class="signup-guide-text-area"></textarea>
+    <label for="capacity" class="search-form-fields">CAPACITY:</label>
+    <input type="text" name="capacity" placeholder="ex.: 10" class="search-form-text-input" required>
+
+    <label class="search-form-fields">ITINERARY LANGUAGES:</label>
     {{#each user.languages}}
-      <input type="checkbox" name="languages" value="{{this}}" checked>{{this}}
+    <div class="categories-checkbox">
+      <input id="{{this}}" type="checkbox" name="languages" value="{{this}}" checked><label for="{{this}}">
+        {{this}}</label>
+    </div>
     {{/each}}
-  </p>
 
-  <p>Categories:<br>
+    <label class="search-form-fields">CATEGORIES:</label>
     {{#each categories}}
-      <input type="checkbox" name="categories" value="{{this}}">{{this}}
+    <div class="categories-checkbox">
+      <input id="{{this}}" type="checkbox" name="categories" value="{{this}}"><label for="{{this}}">
+        {{this}}</label>
+    </div>
     {{/each}}
-  </p>
 
 
-  {{#if message}}
+    {{#if message}}
     <div>{{ message }}</div>
-  {{/if}}
-  <div class="pac-card" id="pac-card">
-    <div>
-      <div id="title">
-        Search
+    {{/if}}
+    <div class="pac-card" id="pac-card">
+      <div>
+        <div id="title">
+          Search
+        </div>
+      </div>
+      <div id="pac-container">
+        <input id="pac-input" type="text" placeholder="Enter a location">
       </div>
     </div>
-    <div id="pac-container">
-      <input id="pac-input" type="text" placeholder="Enter a location">
+    <div id="map"></div>
+    <div id="infowindow-content">
+      <img src="" width="16" height="16" id="place-icon">
+      <span id="place-name" class="title"></span>
+      <span id="place-address"></span>
     </div>
-  </div>
-  <div id="map"></div>
-  <div id="infowindow-content">
-    <img src="" width="16" height="16" id="place-icon">
-    <span id="place-name" class="title"></span><br>
-    <span id="place-address"></span>
-  </div>
 
-  <select name="hours" id="place-hours">
-    <option value="" selected disabled>Hours</option>
-    {{#each hours}}
-    <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <select name="minutes" id="place-minutes">
-    <option value="" selected disabled>Minutes</option>
-    {{#each minutes}}
-    <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <br><br>
-  <button id="add-place">Add place</button>
-  <br><br>
-  <div id="itineraty-summary"></div>
-  <br><br>
-  <button>Create itinerary</button>
-  {{!-- <div id="map2"></div> --}}
+    <select name="hours" id="place-hours">
+      <option value="" selected disabled>Hours</option>
+      {{#each hours}}
+      <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
+    <select name="minutes" id="place-minutes">
+      <option value="" selected disabled>Minutes</option>
+      {{#each minutes}}
+      <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
 
-  <div id="alert-message"
-    style="width: 20%; height: 20%; background: #000; display: none; position: absolute; top: 0; left: 0; color: #fff; justify-content: center; align-items: center">
-  </div>
+    <button id="add-place" class="create-btn">Add place</button>
+
+    <div id="itineraty-summary"></div>
+
+    <button type="submit" class="search-btn">Create itinerary</button>
+    {{!-- <div id="map2"></div> --}}
+
+    <div id="alert-message"
+      style="width: 20%; height: 20%; background: #000; display: none; position: absolute; top: 0; left: 0; color: #fff; justify-content: center; align-items: center">
+    </div>
 
 
-</form>
-<script
-  src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
+  </form>
+</main>
+<script src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
 <script src="/js/script.js"></script>
 {{!-- <script>window.onload = initMap()</script> --}}
