@@ -50,7 +50,7 @@ addBtn.addEventListener('click', () => {
     itinerarySummary.innerHTML = '';
     for (let i = 0; i < placesArr.length; i += 1) {
       itinerarySummary.innerHTML += `
-        <div id="table-row-${placesArr[i].id}">
+        <div id="table-row-${placesArr[i].id}" class="places-table">
           <div class="tableTimeDiv">${placesArr[i].hours}:${placesArr[i].minutes}</div>
           <div class="tablePlaceDiv">${placesArr[i].place}</div>
           <div class="tableDeleteDiv" id="target-${placesArr[i].id}">Delete</div>
@@ -121,7 +121,7 @@ const initMap = () => {
     anchorPoint: new google.maps.Point(0, -29),
   });
 
-  
+
   autocomplete.addListener('place_changed', () => {
     infowindow.close();
     marker.setVisible(false);
@@ -247,4 +247,3 @@ window.onload = initMap2();
 // subscribeBtn.addEventListener('click', () => {
 
 // });
-

@@ -1,46 +1,104 @@
-Name: {{itinerary.name}}<br><br>
-Description: {{itinerary.description}}<br><br>
-{{#each itinerary.places}}
-  {{this.name}} - {{this.hours}}:{{this.minutes}}<br>
-{{/each}}<br>
-{{#if isSubs}}
-  You have already subscribed for {{number}} people.<br>
-  <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
-    <select name="updateNum" id="updateNum">
-        <option value="0">0</option>      
-      {{#each remainingCapacityArr}}
+<nav>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+  </div>
+  <div class="nav-right">
+    <ul>
+      <li><a href="/">Search</a></li>
+      {{#if user}}
+      <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
+      <li><a href="/auth/logout">Logout</a></li>
+      {{else}}
+      <li><a href="/auth/guide-signup">Become a guide</a></li>
+      <li><a href="/auth/tourist-signup">Sign in as a tourist</a></li>
+      <li><a href="/auth/login">Login</a></li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+
+<main class="content-container">
+  <div class="search-itinerary-heading">
+    <h2>{{itinerary.name}}</h2>
+    <a href="/auth/profile/{{itinerary.owner._id}}">
+      <div class="search-owner-info">
+        <p class="search-owner-name">{{itinerary.owner.username}}</p>
+        <img src="{{itinerary.owner.profileImg}}" alt="{{itinerary.owner.username}} profile picture" class="search-profile-image">
+      </div>
+    </a>
+  </div>
+  <h3 class="search-local-info">{{itinerary.city}} - {{itinerary.date}}</h3>
+  <div class="itinerary-item">
+    <h4 class="itinerary-titles">Categories: </h4>
+    {{#each itinerary.categories}}
+      <p class="itinerary-content">{{this}} |</p>
+    {{/each}}
+  </div>
+  <div class="itinerary-item">
+    <h4 class="itinerary-titles">Languages: </h4>
+    {{#each itinerary.languages}}
+      <p class="itinerary-content">{{this}} |</p>
+    {{/each}}
+  </div>
+  <div class="itinerary-item">
+    <h4 class="itinerary-titles">Description: </h4>
+    <p class="itinerary-content">{{itinerary.description}}</p>
+  </div>
+  
+  <div class="itinerary-item">
+    <h4 class="itinerary-titles">Remaining capacity: </h4>
+    <p class="itinerary-content">{{itinerary.remainingCapacity}}/{{itinerary.capacity}}</p>
+  </div>
+  {{!-- {{#each itinerary.places}}
+    {{this.name}} - {{this.hours}}:{{this.minutes}}
+  {{/each}} --}}
+  <div class="subs-btn">
+    {{#if isSubs}}
+    <p class="subs-message">
+      You have already subscribed for {{number}} people.
+    </p>
+    <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+      <select name="updateNum" id="updateNum">
+        <option value="0">0</option>
+        {{#each remainingCapacityArr}}
         <option value="{{this}}">{{this}}</option>
-      {{/each}}
-    </select>
-    <input type="hidden" name="number" value="{{number}}">
-    <button type="submit" id="subscribe-btn">Update</button>
-  </form>
-{{/if}}
-<br>
-Capacity: {{itinerary.capacity}}
-<br>
-Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
+        {{/each}}
+      </select>
+      <input type="hidden" name="number" value="{{number}}">
+      <button class="select-btn" type="submit" id="subscribe-btn">Update</button>
+    </form>
+    {{/if}}
 
-{{#if isRole}}
-  {{#if availableSubscribe}}
-    {{#unless isSubs}}
-      <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
-        <select name="subscribeNum" id="subscribeNum">
-          {{#each remainingCapacityArr}}
+    {{#if isRole}}
+      {{#if availableSubscribe}}
+        {{#unless isSubs}}
+        <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
+          <select name="subscribeNum" id="subscribeNum">
+            {{#each remainingCapacityArr}}
             <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-        <button type="submit" id="subscribe-btn">Subscribe</button>
-      </form>
-    {{/unless}}
-    {{else}}
-      No available places remaining.
-  {{/if}}
-{{/if}}
+            {{/each}}
+          </select>
+          <button class="select-btn" type="submit" id="subscribe-btn">Subscribe</button>
+        </form>
+        {{/unless}}
+      {{else}}
+        <p>No available places remaining.</p>
+      {{/if}} 
+    {{/if}}
+  </div>
 
+  <div class="places-map">
+    <div class="places-list">
+      {{#each itinerary.places}}
+        <div class="places-map-item">
+          <p class="places-time">{{hours}}h{{minutes}}</p>
+          <p class="places-name">{{name}}</p>
+        </div>
+      {{/each}}
+    </div>
+    <div id="map"></div>
+  </div>
+</main>
 
-<div id="map"></div>
-
-<script
-  src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
 <script src="/js/script3.js"></script>

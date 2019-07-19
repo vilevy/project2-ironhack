@@ -155,12 +155,15 @@ itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, 
   let isSubs = false;
   // if user have already subscribed, set isSubs to true and get number of members
   Itinerary.findById(itineraryID)
+    .populate('owner')
     .then(((itinerary) => {
       const { subscribers } = itinerary;
       subscribers.forEach((el) => {
-        if (JSON.stringify(el.tourist) === JSON.stringify(user._id)) {
-          isSubs = true;
-          number = el.number;
+        if (user) {
+          if (JSON.stringify(el.tourist) === JSON.stringify(user._id)) {
+            isSubs = true;
+            number = el.number;
+          }
         }
       });
       let availableSubscribe = false;
@@ -206,7 +209,7 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
       if (subscribersNum === 0) {
         User.updateOne({ _id: req.user._id }, { $pull: { itineraries: itineraryID } })
           .then(() => {
-            Itinerary.updateOne({ _id: itineraryID }, { $pull: { subscribers: { tourist: req.user._id } } }, { multi: true })
+            Itinerary.updateOne({ _id: itineraryID }, { $pull: { subscribers: { tourist: req.user._id } }, $set: { remainingCapacity: singleItinerary.remainingCapacity + number } }, { multi: true })
               .then(() => {
                 res.redirect(`/itinerary/itinerary/${itineraryID}`);
               })
@@ -225,12 +228,9 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
           .catch(err => console.log(err));
       // if updates, not 0 value
       } else {
-        console.log('SUBS: ', subscribersNum);
-        console.log('NUMBER: ', number);
         const newNumber = subscribersNum;
         subscribersNum -= number;
         if (subscribersNum > number) subscribersNum *= -1;
-        console.log('SUBS NOVO: ', subscribersNum);
         Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum, subscribers: { tourist: req.user._id, number: newNumber } } })
           .then((() => {
             User.updateOne({ _id: req.user._id }, { $push: { itineraries: itineraryID } })
@@ -305,6 +305,7 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
 
 itineraryRoutes.post(('/search'), (req, res, next) => {
   let { city, categories, dateFrom, dateTo } = req.body;
+  const user = req.user;
   console.log('before: ', dateTo);
   dateFromDay = new Date(dateFrom).getDate();
   dateFromMonth = new Date(dateFrom).getMonth() + 1;
@@ -323,18 +324,19 @@ itineraryRoutes.post(('/search'), (req, res, next) => {
   }
 
   Itinerary.find({ $and: [{ city }, { categories: { $in: categories } }] })
+    .populate('owner')
     .then((results) => {
-      res.render('itinerary/search', { results });
+      res.render('itinerary/search', { results, user });
     })
     .catch(err => console.log(err));
 });
 
-itineraryRoutes.get(('/getplaces'), (req, res, next) => {
-  const itineraryID = req.params.id;
-  Itinerary.findById(itineraryID)
-    .then((itinerary) => {
+// itineraryRoutes.get(('/getplaces'), (req, res, next) => {
+//   const itineraryID = req.params.id;
+//   Itinerary.findById(itineraryID)
+//     .then((itinerary) => {
       
-    })
-});
+//     })
+// });
 
 module.exports = itineraryRoutes;

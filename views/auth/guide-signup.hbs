@@ -1,152 +1,268 @@
-<h2>Signup as a guide</h2>
+<nav>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+  </div>
+  <div class="nav-right"></div>
+</nav>
 
-<form action="/auth/guide-signup" method="POST" enctype="multipart/form-data">
-  <input type="hidden" name="role" value="guide">
-  <label for="name">Full name*:</label>
-  <input id="name" type="text" name="name" placeholder="Your name" required>
-  <br><br>
-  <label for="name">Username*:</label>
-  <input id="name" type="text" name="username" placeholder="Your username" required>
-  <br><br>
-  <label for="birthDate">Birth Date*:</label>
-  <select name="birthDateDay" required>
-    <option value="" disabled selected>Day</option>
-    {{#each days}}
+
+<main class="content-container">
+  <h2>Signup as a guide</h2>
+
+  <form action="/auth/guide-signup" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="role" value="guide">
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">FULL NAME</label>
+      <input class="where-input search-form-text-input" type="text" id="Where" name="name" />
+    </div>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">USERNAME</label>
+      <input class="where-input search-form-text-input" type="text" id="Where" name="username" />
+    </div>
+    <div class="search-date">
+      <label class="search-form-fields mt2" for="from">BIRTH DATE</label>
+      <input type="date" id="birth" class="search-form-text-input" name="birthDate" />
+    </div>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">PHONE</label>
+      <input class="where-input search-form-text-input" type="text" id="phone" name="phone" />
+    </div>
+    <div class="search-where">
+      <label class="search-form-fields mt2" for="where">E-MAIL</label>
+      <input class="where-input search-form-text-input" type="text" id="e-mail" name="email" />
+    </div>
+    <label class="search-form-fields mt2" for="languages">LANGUAGES</label>
+    <form action="/">
+      <div class="categories-checkbox">
+        <input id="languages-arabic" type="checkbox" name="languages" value="Arabic"><label for="languages-arabic">
+          Arabic</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-dutch" type="checkbox" name="languages" value="Dutch"><label for="languages-dutch">
+          Dutch</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-english" type="checkbox" name="languages" value="English"><label for="languages-english">
+          English</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-french" type="checkbox" name="languages" value="French"><label for="languages-french">
+          French</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-german" type="checkbox" name="languages" value="German"><label for="languages-german">
+          German</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-greek" type="checkbox" name="languages" value="Greek"><label for="languages-greek">
+          Greek</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-hindi" type="checkbox" name="languages" value="Hindi"><label for="languages-hindi">
+          Hindi</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-italian" type="checkbox" name="languages" value="Italian"><label for="languages-italian">
+          Italian</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-japanese" type="checkbox" name="languages" value="Japanese"><label
+          for="languages-japanese">
+          Japanese</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-korean" type="checkbox" name="languages" value="Korean"><label for="languages-korean">
+          Korean</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-mandarin" type="checkbox" name="languages" value="Mandarin"><label
+          for="languages-mandarin">
+          Mandarin</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-portuguese" type="checkbox" name="languages" value="Portuguese"><label
+          for="languages-portuguese">
+          Portuguese</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-russian" type="checkbox" name="languages" value="Russian"><label for="languages-russian">
+          Russian</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-spanish" type="checkbox" name="languages" value="Spanish"><label for="languages-spanish">
+          Spanish</label>
+      </div>
+      <div class="categories-checkbox">
+        <input id="languages-turkish" type="checkbox" name="languages" value="Turkish"><label for="languages-turkish">
+          Turkish</label>
+      </div>
+      <div class="search-where">
+        <label class="search-form-fields mt2" for="about">ABOUT ME</label>
+        <p class="guide-about-me">
+          Use this field to talk more about yourself, your proficiency levels in the selected languages, your
+          profession, hobbies, the links of your social medias or any information you want to share about
+          yourself.
+        </p>
+        <textarea class="signup-guide-text-area" name="about"></textarea>
+      </div>
+
+      <div class="picture">
+        <label class="search-form-fields mt2" id="fileLabel" for="profile-picture">PROFILE PICTURE</label>
+        <input id="profile-picture" type="file" name="profileImg">
+      </div>
+
+      <div class="search-where">
+        <label class="search-form-fields mt2" for="password">PASSWORD</label>
+        <input class="where-input search-form-text-input" type="text" id="password" name="password" />
+      </div>
+      <button id="create-account-button" class="search-btn" href="#">Create account</button>
+      {{!-- <input type="hidden" name="role" value="guide">
+    <label for="name">Full name*:</label>
+    <input id="name" type="text" name="name" placeholder="Your name" required>
+    <br><br>
+    <label for="name">Username*:</label>
+    <input id="name" type="text" name="username" placeholder="Your username" required>
+    <br><br>
+    <label for="birthDate">Birth Date*:</label>
+    <select name="birthDateDay" required>
+      <option value="" disabled selected>Day</option>
+      {{#each days}}
       <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <select name="birthDateMonth" required>
+      {{/each}}
+    </select>
+    <select name="birthDateMonth" required>
       <option value="" disabled selected>Month</option>
-    {{#each months}}
+      {{#each months}}
       <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
-  <select name="birthDateYear" required>
-    <option value="" disabled selected>Year</option>
-    {{#each years}}
-    <option value="{{this}}">{{this}}</option>
-    {{/each}}
-  </select>
+      {{/each}}
+    </select>
+    <select name="birthDateYear" required>
+      <option value="" disabled selected>Year</option>
+      {{#each years}}
+      <option value="{{this}}">{{this}}</option>
+      {{/each}}
+    </select>
 
-  <br><br>
-  <label for="phone">Phone*:</label>
-  <input type="tel" name="phone" placeholder="+XX (XX) XXXXX-XXXX" required>
-  <br><br>
-  <label for="email">E-mail*:</label>
-  <input id="email" type="text" name="email" placeholder="Your e-mail" required>
-  <br><br>
-  <p> Choose the languages you speak:<br>
-    <input type="checkbox" name="languages" value="Afrikanns">Afrikanns
-    <input type="checkbox" name="languages" value="Albanian">Albanian
-    <input type="checkbox" name="languages" value="Arabic">Arabic
-    <input type="checkbox" name="languages" value="Armenian">Armenian
-    <input type="checkbox" name="languages" value="Basque">Basque
-    <input type="checkbox" name="languages" value="Bengali">Bengali<br>
-    <input type="checkbox" name="languages" value="Bulgarian">Bulgarian
-    <input type="checkbox" name="languages" value="Catalan">Catalan
-    <input type="checkbox" name="languages" value="Cambodian">Cambodian
-    <input type="checkbox" name="languages" value="Chinese (Mandarin)">Chinese (Mandarin)
-    <input type="checkbox" name="languages" value="Croation">Croation
-    <input type="checkbox" name="languages" value="Czech">Czech<br>
-    <input type="checkbox" name="languages" value="Danish">Danish
-    <input type="checkbox" name="languages" value="Dutch">Dutch
-    <input type="checkbox" name="languages" value="English">English
-    <input type="checkbox" name="languages" value="Estonian">Estonian
-    <input type="checkbox" name="languages" value="Fiji">Fiji
-    <input type="checkbox" name="languages" value="Finnish">Finnish<br>
-    <input type="checkbox" name="languages" value="French">French
-    <input type="checkbox" name="languages" value="Georgian">Georgian
-    <input type="checkbox" name="languages" value="German">German
-    <input type="checkbox" name="languages" value="Greek">Greek
-    <input type="checkbox" name="languages" value="Gujarati">Gujarati
-    <input type="checkbox" name="languages" value="Hebrew">Hebrew<br>
-    <input type="checkbox" name="languages" value="Hindi">Hindi
-    <input type="checkbox" name="languages" value="Hungarian">Hungarian
-    <input type="checkbox" name="languages" value="Icelandic">Icelandic
-    <input type="checkbox" name="languages" value="Indonesian">Indonesian
-    <input type="checkbox" name="languages" value="Irish">Irish
-    <input type="checkbox" name="languages" value="Italian">Italian<br>
-    <input type="checkbox" name="languages" value="Japanese">Japanese
-    <input type="checkbox" name="languages" value="Javanese">Javanese
-    <input type="checkbox" name="languages" value="Korean">Korean
-    <input type="checkbox" name="languages" value="Latin">Latin
-    <input type="checkbox" name="languages" value="Latvian">Latvian
-    <input type="checkbox" name="languages" value="Lithuanian">Lithuanian<br>
-    <input type="checkbox" name="languages" value="Macedonian">Macedonian
-    <input type="checkbox" name="languages" value="Malay">Malay
-    <input type="checkbox" name="languages" value="Malayalam">Malayalam
-    <input type="checkbox" name="languages" value="Maltese">Maltese
-    <input type="checkbox" name="languages" value="Maori">Maori
-    <input type="checkbox" name="languages" value="Marathi">Marathi<br>
-    <input type="checkbox" name="languages" value="Mongolian">Mongolian
-    <input type="checkbox" name="languages" value="Nepali">Nepali
-    <input type="checkbox" name="languages" value="Norwegian">Norwegian
-    <input type="checkbox" name="languages" value="Persian">Persian
-    <input type="checkbox" name="languages" value="Polish">Polish
-    <input type="checkbox" name="languages" value="Portuguese">Portuguese<br>
-    <input type="checkbox" name="languages" value="Punjabi">Punjabi
-    <input type="checkbox" name="languages" value="Quechua">Quechua
-    <input type="checkbox" name="languages" value="Romanian">Romanian
-    <input type="checkbox" name="languages" value="Russian">Russian
-    <input type="checkbox" name="languages" value="Samoan">Samoan
-    <input type="checkbox" name="languages" value="Serbian">Serbian<br>
-    <input type="checkbox" name="languages" value="Slovak">Slovak
-    <input type="checkbox" name="languages" value="Slovenian">Slovenian
-    <input type="checkbox" name="languages" value="Spanish">Spanish
-    <input type="checkbox" name="languages" value="Swahili">Swahili
-    <input type="checkbox" name="languages" value="Swedish ">Swedish
-    <input type="checkbox" name="languages" value="Tamil">Tamil<br>
-    <input type="checkbox" name="languages" value="Tatar">Tatar
-    <input type="checkbox" name="languages" value="Telugu">Telugu
-    <input type="checkbox" name="languages" value="Thai">Thai
-    <input type="checkbox" name="languages" value="Tibetan">Tibetan
-    <input type="checkbox" name="languages" value="Tonga">Tonga
-    <input type="checkbox" name="languages" value="Turkish">Turkish<br>
-    <input type="checkbox" name="languages" value="Ukranian">Ukranian
-    <input type="checkbox" name="languages" value="Urdu">Urdu
-    <input type="checkbox" name="languages" value="Uzbek">Uzbek
-    <input type="checkbox" name="languages" value="Vietnamese">Vietnamese
-    <input type="checkbox" name="languages" value="Welsh">Welsh
-    <input type="checkbox" name="languages" value="Xhosa">Xhosa<br>
-  </p>
+    <br><br>
+    <label for="phone">Phone*:</label>
+    <input type="tel" name="phone" placeholder="+XX (XX) XXXXX-XXXX" required>
+    <br><br>
+    <label for="email">E-mail*:</label>
+    <input id="email" type="text" name="email" placeholder="Your e-mail" required>
+    <br><br>
+    <p> Choose the languages you speak:<br>
+      <input type="checkbox" name="languages" value="Afrikanns">Afrikanns
+      <input type="checkbox" name="languages" value="Albanian">Albanian
+      <input type="checkbox" name="languages" value="Arabic">Arabic
+      <input type="checkbox" name="languages" value="Armenian">Armenian
+      <input type="checkbox" name="languages" value="Basque">Basque
+      <input type="checkbox" name="languages" value="Bengali">Bengali<br>
+      <input type="checkbox" name="languages" value="Bulgarian">Bulgarian
+      <input type="checkbox" name="languages" value="Catalan">Catalan
+      <input type="checkbox" name="languages" value="Cambodian">Cambodian
+      <input type="checkbox" name="languages" value="Chinese (Mandarin)">Chinese (Mandarin)
+      <input type="checkbox" name="languages" value="Croation">Croation
+      <input type="checkbox" name="languages" value="Czech">Czech<br>
+      <input type="checkbox" name="languages" value="Danish">Danish
+      <input type="checkbox" name="languages" value="Dutch">Dutch
+      <input type="checkbox" name="languages" value="English">English
+      <input type="checkbox" name="languages" value="Estonian">Estonian
+      <input type="checkbox" name="languages" value="Fiji">Fiji
+      <input type="checkbox" name="languages" value="Finnish">Finnish<br>
+      <input type="checkbox" name="languages" value="French">French
+      <input type="checkbox" name="languages" value="Georgian">Georgian
+      <input type="checkbox" name="languages" value="German">German
+      <input type="checkbox" name="languages" value="Greek">Greek
+      <input type="checkbox" name="languages" value="Gujarati">Gujarati
+      <input type="checkbox" name="languages" value="Hebrew">Hebrew<br>
+      <input type="checkbox" name="languages" value="Hindi">Hindi
+      <input type="checkbox" name="languages" value="Hungarian">Hungarian
+      <input type="checkbox" name="languages" value="Icelandic">Icelandic
+      <input type="checkbox" name="languages" value="Indonesian">Indonesian
+      <input type="checkbox" name="languages" value="Irish">Irish
+      <input type="checkbox" name="languages" value="Italian">Italian<br>
+      <input type="checkbox" name="languages" value="Japanese">Japanese
+      <input type="checkbox" name="languages" value="Javanese">Javanese
+      <input type="checkbox" name="languages" value="Korean">Korean
+      <input type="checkbox" name="languages" value="Latin">Latin
+      <input type="checkbox" name="languages" value="Latvian">Latvian
+      <input type="checkbox" name="languages" value="Lithuanian">Lithuanian<br>
+      <input type="checkbox" name="languages" value="Macedonian">Macedonian
+      <input type="checkbox" name="languages" value="Malay">Malay
+      <input type="checkbox" name="languages" value="Malayalam">Malayalam
+      <input type="checkbox" name="languages" value="Maltese">Maltese
+      <input type="checkbox" name="languages" value="Maori">Maori
+      <input type="checkbox" name="languages" value="Marathi">Marathi<br>
+      <input type="checkbox" name="languages" value="Mongolian">Mongolian
+      <input type="checkbox" name="languages" value="Nepali">Nepali
+      <input type="checkbox" name="languages" value="Norwegian">Norwegian
+      <input type="checkbox" name="languages" value="Persian">Persian
+      <input type="checkbox" name="languages" value="Polish">Polish
+      <input type="checkbox" name="languages" value="Portuguese">Portuguese<br>
+      <input type="checkbox" name="languages" value="Punjabi">Punjabi
+      <input type="checkbox" name="languages" value="Quechua">Quechua
+      <input type="checkbox" name="languages" value="Romanian">Romanian
+      <input type="checkbox" name="languages" value="Russian">Russian
+      <input type="checkbox" name="languages" value="Samoan">Samoan
+      <input type="checkbox" name="languages" value="Serbian">Serbian<br>
+      <input type="checkbox" name="languages" value="Slovak">Slovak
+      <input type="checkbox" name="languages" value="Slovenian">Slovenian
+      <input type="checkbox" name="languages" value="Spanish">Spanish
+      <input type="checkbox" name="languages" value="Swahili">Swahili
+      <input type="checkbox" name="languages" value="Swedish ">Swedish
+      <input type="checkbox" name="languages" value="Tamil">Tamil<br>
+      <input type="checkbox" name="languages" value="Tatar">Tatar
+      <input type="checkbox" name="languages" value="Telugu">Telugu
+      <input type="checkbox" name="languages" value="Thai">Thai
+      <input type="checkbox" name="languages" value="Tibetan">Tibetan
+      <input type="checkbox" name="languages" value="Tonga">Tonga
+      <input type="checkbox" name="languages" value="Turkish">Turkish<br>
+      <input type="checkbox" name="languages" value="Ukranian">Ukranian
+      <input type="checkbox" name="languages" value="Urdu">Urdu
+      <input type="checkbox" name="languages" value="Uzbek">Uzbek
+      <input type="checkbox" name="languages" value="Vietnamese">Vietnamese
+      <input type="checkbox" name="languages" value="Welsh">Welsh
+      <input type="checkbox" name="languages" value="Xhosa">Xhosa<br>
+    </p>
 
-  <p> Chosse your interests:<br>
-    <input type="checkbox" name="interests" value="Sports">Sports
-    <input type="checkbox" name="interests" value="Party">Party
-    <input type="checkbox" name="interests" value="Restaturant">Restaturant
-    <input type="checkbox" name="interests" value="Museums">Museums<br>
-    <input type="checkbox" name="interests" value="Religion">Religion
-    <input type="checkbox" name="interests" value="History">History
-    <input type="checkbox" name="interests" value="Arts">Arts
-    <input type="checkbox" name="interests" value="Music">Music<br>
-    <input type="checkbox" name="interests" value="Cars">Cars
-    <input type="checkbox" name="interests" value="Bars">Bars
-    <input type="checkbox" name="interests" value="Parks">Parks
-    <input type="checkbox" name="interests" value="Animals">Animals<br>
-    <input type="checkbox" name="interests" value="Children">Children
-  </p>
+    <p> Chosse your interests:<br>
+      <input type="checkbox" name="interests" value="Sports">Sports
+      <input type="checkbox" name="interests" value="Party">Party
+      <input type="checkbox" name="interests" value="Restaturant">Restaturant
+      <input type="checkbox" name="interests" value="Museums">Museums<br>
+      <input type="checkbox" name="interests" value="Religion">Religion
+      <input type="checkbox" name="interests" value="History">History
+      <input type="checkbox" name="interests" value="Arts">Arts
+      <input type="checkbox" name="interests" value="Music">Music<br>
+      <input type="checkbox" name="interests" value="Cars">Cars
+      <input type="checkbox" name="interests" value="Bars">Bars
+      <input type="checkbox" name="interests" value="Parks">Parks
+      <input type="checkbox" name="interests" value="Animals">Animals<br>
+      <input type="checkbox" name="interests" value="Children">Children
+    </p>
 
-  <label for="about">About me:</label>
-  <p>This field is...</p>
-  <textarea name="about" id="about" cols="50" rows="10"></textarea>
+    <label for="about">About me:</label>
+    <p>This field is...</p>
+    <textarea name="about" id="about" cols="50" rows="10"></textarea>
 
-  <br><br>
-  <label for="profileImg">Profile picture:</label>
-  <input type="file" name="profileImg">
+    <br><br>
+    <label for="profileImg">Profile picture:</label>
+    <input type="file" name="profileImg">
 
-  <br><br>
-  <label for="password">Password*:</label>
-  <input type="password" name="password" required>
+    <br><br>
+    <label for="password">Password*:</label>
+    <input type="password" name="password" required>
 
-  {{#if message}}
-  <div>{{ message }}</div>
-  {{/if}}
+    {{#if message}}
+    <div>{{ message }}</div>
+    {{/if}}
 
-  <br><br>
-  <button>Create account</button>
+    <br><br>
+    <button>Create account</button> --}}
 
-  {{!-- <p class="account-message">
-    Do you already have an account?
-    <a href="/auth/guide-login">Login</a>
-  </p> --}}
-</form>
+      {{!-- <p class="account-message">
+      Do you already have an account?
+      <a href="/auth/guide-login">Login</a>
+    </p> --}}
+    </form>
+</main>
