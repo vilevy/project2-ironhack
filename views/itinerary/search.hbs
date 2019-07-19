@@ -1,7 +1,10 @@
 <nav>
-  <div class="nav-left"><h2><a href="/">Voluntouring</a></h2></div>
+  <div class="nav-left">
+    <h2><a href="/">Voluntouring</a></h2>
+    <span id="hamburger"><b>MENU</b></span>
+  </div>
   <div class="nav-right">
-    <ul>
+    <ul id="lista">
       {{#if user}}
         <li><a href="/auth/profile/{{user.id}}">My profile</a></li>
         <li><a href="/auth/logout">Logout</a></li>

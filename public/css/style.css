@@ -289,7 +289,7 @@ nav ul li:hover {
   display: inline-block;
   width: 2rem;
   height: 2rem;
-  object-fit: contain;
+  object-fit: cover;
   margin: 0 .5rem;
   border-radius: 50%;
 }
@@ -345,7 +345,7 @@ nav ul li:hover {
   width: 15rem;
   height: 15rem;
   margin-right: 1rem;
-  object-fit: contain;
+  object-fit: cover;
   border-radius: 50%;
   background: red;
 }
@@ -492,4 +492,116 @@ select {
   width: 60%;
   justify-content: space-between;
   margin: .3rem 0;
+}
+
+
+/* edit profile */
+
+#fixed-username {
+  font-size: .9rem;
+  margin: 1rem 0;
+}
+
+/* 1300
+
+998 */
+
+@media (max-width: 998px) {
+  .content-container {
+    width: 100%;
+  }
+
+  .profile-actions {
+    justify-content: flex-start;
+  }
+} 
+
+@media (max-width: 1300px) {
+  .places-map {
+    flex-direction: column
+  }
+} 
+
+#hamburger {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  #hamburger {
+    display: block;
+  }
+
+  nav {
+    width: 100%;
+    padding: 2rem 0;
+  }
+  .nav-right {
+    width: 100%;
+    margin: 0;
+    top: 6rem;
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+  }
+
+  nav ul {
+    height: 100%;
+    transform: translateX(-100%);
+    transition: .2s ease;
+  }
+
+  nav ul li {
+    display: block;
+    border-bottom: 1px solid #fff;
+    /* height: 3rem; */
+    padding:3rem;
+    /* height: 30vh; */
+    width: 100%;
+    background: rgba(0, 0, 0, .9);
+    margin: 0;
+    text-align: center;
+    /* line-height: 30vh; */
+    color: #fff;
+    font-weight: 800;
+    font-size: 2rem;
+  }
+
+  nav {
+    flex-direction: column;
+  }
+
+  .nav-left {
+    padding: 0 2rem;
+    line-height: 3rem;
+    display: flex;
+    width: 100%;
+    justify-content: space-between
+  }
+
+  nav span {
+    cursor: pointer;
+  }
+} 
+
+#alert-message {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .85);
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: #fff;
+  justify-content:center;
+  align-items: center
+}
+
+#close-modal {
+  cursor: pointer;
+  display: none;
+  color: #fff;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
 }
