@@ -165,7 +165,7 @@ authRoutes.get('/profile/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkU
   const userID = req.params.id;
   let isGuide = false;
   User.findById(userID)
-    .populate('itineraries.itinerary')
+    .populate('itineraries')
     .then(((userFound) => {
       if (req.user.role === 'guide') {
         isGuide = true;

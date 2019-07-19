@@ -1,3 +1,22 @@
 <a href="/auth/guide-signup">Become a guide</a><br>
 <a href="/auth/tourist-signup">Sign up</a><br>
 <a href="/auth/login">Login</a>
+
+
+<form action="/itinerary/search" method="POST">
+  <label for="city">City:</label>
+  <input type="text" name="city" id="city-search" required>
+  <label for="">From</label>
+  <input type="date" name="dateFrom">
+  <label for="">To</label>
+  <input type="date" name="dateTo">
+  <input type="checkbox" name="categories" value="Sports">Sports
+  <input type="checkbox" name="categories" value="Bars">Bars
+  <input type="checkbox" name="categories" value="Restaurant">Restaurant
+  <button type="sumbit">Search</button>
+</form>
+
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
+<script src="/js/script2.js"></script>
