@@ -3,11 +3,10 @@ Description: {{itinerary.description}}<br><br>
 {{#each itinerary.places}}
   {{this.name}} - {{this.hours}}:{{this.minutes}}<br>
 {{/each}}<br>
-
 {{#if isSubs}}
   You have already subscribed for {{number}} people.<br>
   <form action="/itinerary/itinerary/{{itinerary._id}}" method="POST">
-    <select name="updateSubscribeNum" id="updateSubscribeNum">
+    <select name="updateNum" id="updateNum">
         <option value="0">0</option>      
       {{#each remainingCapacityArr}}
         <option value="{{this}}">{{this}}</option>
@@ -39,4 +38,9 @@ Remaining Capacity: {{itinerary.remainingCapacity}}<br><br>
   {{/if}}
 {{/if}}
 
-<script src="/js/script.js"></script>
+
+<div id="map"></div>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key={{googleKey}}&libraries=places"></script>
+<script src="/js/script3.js"></script>

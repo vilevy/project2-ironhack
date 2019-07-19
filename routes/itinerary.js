@@ -85,7 +85,7 @@ itineraryRoutes.get('/create', ensureLogin.ensureLoggedIn('/auth/login'), checkR
 itineraryRoutes.post('/create', (req, res, next) => {
   const { name, city, description, capacity, languages, categories, place } = req.body;
   let { date } = req.body;
-  dateDay = new Date(date).getDate() + 1;
+  dateDay = new Date(date).getDate();
   dateMonth = new Date(date).getMonth() + 1;
   dateYear = new Date(date).getFullYear();
   date = `${dateDay}/${dateMonth}/${dateYear}`;
@@ -104,6 +104,8 @@ itineraryRoutes.post('/create', (req, res, next) => {
         minutes: placeArrSplit[1],
         name: placeArrSplit[2],
         id: placeArrSplit[3],
+        lat: placeArrSplit[4],
+        long: placeArrSplit[5],        
       };
       placesObjArr.push(placeObj);
     });
@@ -134,7 +136,7 @@ itineraryRoutes.post('/create', (req, res, next) => {
     if (err) {
       res.send(err);
     } else {
-      User.updateOne({ _id: owner }, { $push: { itineraries: { itinerary: newItinerary._id, number: 0} } })
+      User.updateOne({ _id: owner }, { $push: { itineraries: newItinerary._id } })
         .then(() => {
           res.redirect(`/auth/profile/${req.user._id}`);
         })
@@ -145,82 +147,194 @@ itineraryRoutes.post('/create', (req, res, next) => {
 
 // view each itinerary
 itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
+  const googleKey = process.env.MAPS_KEY;
   const { user } = req;
   const { isRole } = req;
+  let number = 0;
   const itineraryID = req.params.id;
+  let isSubs = false;
+  // if user have already subscribed, set isSubs to true and get number of members
   Itinerary.findById(itineraryID)
     .then(((itinerary) => {
-      let isSubs = false;
-      let number = 0;
-      if (user) {
-        user.itineraries.forEach(((el) => {
-          if (JSON.stringify(el.itinerary._id) === JSON.stringify(itineraryID) && user.role === 'tourist') {
-            isSubs = true;
-            number = el.number;
-          }
-        }));
-      }
+      const { subscribers } = itinerary;
+      subscribers.forEach((el) => {
+        if (JSON.stringify(el.tourist) === JSON.stringify(user._id)) {
+          isSubs = true;
+          number = el.number;
+        }
+      });
       let availableSubscribe = false;
       if (itinerary.remainingCapacity > 0) {
         availableSubscribe = true;
       }
       const remainingCapacityArr = [];
-      for (let i = 1; i <= itinerary.remainingCapacity; i += 1) {
-        remainingCapacityArr.push(i);
+      if (itinerary.remainingCapacity >= number) {
+        for (let i = 1; i <= itinerary.remainingCapacity; i += 1) {
+          remainingCapacityArr.push(i);
+        }
+      } else {
+        for (let i = 1; i <= number; i += 1) {
+          remainingCapacityArr.push(i);
+        }
       }
-      res.render('itinerary/itinerary', { itinerary, user, remainingCapacityArr, isRole, isSubs, availableSubscribe, number });
+      res.render('itinerary/itinerary', { itinerary, user, remainingCapacityArr, isRole, isSubs, availableSubscribe, number, googleKey });
     }))
     .catch(err => console.log(err));
 });
 
 itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
-  let subscribersNum = 0;
-  let { number } = req.body;
-  if (req.body.updateSubscribeNum) {
-    if (parseInt(req.body.updateSubscribeNum, 10) === 0) {
-      subscribersNum = 0;
-    } else {
-      subscribersNum = (parseInt(req.body.updateSubscribeNum, 10) - parseInt(req.body.number, 10));
-    }
-  }
-  if (req.body.subscribeNum) {
-    subscribersNum = parseInt(req.body.subscribeNum, 10);
+  let subscribersNum = parseInt(req.body.subscribeNum, 10);
+  if (req.body.updateNum) {
+    subscribersNum = parseInt(req.body.updateNum, 10);
   }
   const itineraryID = req.params.id;
-  Itinerary.findById(itineraryID)
-    .then((singleItinerary) => {
-      Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
-        $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
-        .then((() => {
-          User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
-
-          if (parseInt(req.body.updateSubscribeNum, 10) !== 0) {
-            User.updateOne({ _id: req.user._id }, { $addToSet: { itineraries: { itinerary: itineraryID, number } } })
-              .then(() => {
-                res.redirect(`/itinerary/itinerary/${itineraryID}`);
-              })
-              .catch(error => console.log(error));
-          } else {
-            User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
-              .then(() => {
-                res.redirect(`/itinerary/itinerary/${itineraryID}`);
-              })
-              .catch(error => console.log(error));
-          }
-        }))
-        .catch(err => console.log(err));
-    })
-    .catch(error => console.log(error));
-});
-
-// edit itinerary
-itineraryRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLoggedOwner(), (req, res, next) => {
-  const itineraryID = req.params.id;
+  let number = 0;
   Itinerary.findById(itineraryID)
     .then(((itinerary) => {
-      res.render('itinerary/edit', { itinerary });
+      const { subscribers } = itinerary;
+      subscribers.forEach((el) => {
+        if (JSON.stringify(el.tourist) === JSON.stringify(req.user._id)) {
+          number = el.number;
+        }
+      });
     }))
     .catch(err => console.log(err));
+
+  Itinerary.findById(itineraryID)
+    .then((singleItinerary) => {
+      // if sets update to 0 (same as unsubscribe)
+      if (subscribersNum === 0) {
+        User.updateOne({ _id: req.user._id }, { $pull: { itineraries: itineraryID } })
+          .then(() => {
+            Itinerary.updateOne({ _id: itineraryID }, { $pull: { subscribers: { tourist: req.user._id } } }, { multi: true })
+              .then(() => {
+                res.redirect(`/itinerary/itinerary/${itineraryID}`);
+              })
+              .catch(err => console.log(err));
+          })
+          .catch(err => console.log(err));
+      // if subscribe (not update)
+      } else if (!req.body.updateNum) {
+        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
+          $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
+          .then((() => {
+            User.updateOne({ _id: req.user._id }, { $push: { itineraries: itineraryID } })
+              .then(() => res.redirect(`/itinerary/itinerary/${itineraryID}`))
+              .catch(err => console.log(err));
+          }))
+          .catch(err => console.log(err));
+      // if updates, not 0 value
+      } else {
+        console.log('SUBS: ', subscribersNum);
+        console.log('NUMBER: ', number);
+        const newNumber = subscribersNum;
+        subscribersNum -= number;
+        if (subscribersNum > number) subscribersNum *= -1;
+        console.log('SUBS NOVO: ', subscribersNum);
+        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum, subscribers: { tourist: req.user._id, number: newNumber } } })
+          .then((() => {
+            User.updateOne({ _id: req.user._id }, { $push: { itineraries: itineraryID } })
+              .then(() => res.redirect(`/itinerary/itinerary/${itineraryID}`))
+              .catch(err => console.log(err));
+          }))
+          .catch(err => console.log(err));
+      }
+    })
+    .catch(err => console.log(err));
+});
+
+// itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
+//   let subscribersNum = 0;
+//   let { number } = req.body;
+//   if (req.body.updateSubscribeNum) {
+//     if (parseInt(req.body.updateSubscribeNum, 10) === 0) {
+//       subscribersNum = 0;
+//     } else {
+//       subscribersNum = (parseInt(req.body.updateSubscribeNum, 10) - parseInt(req.body.number, 10));
+//     }
+//   }
+//   if (req.body.subscribeNum) {
+//     subscribersNum = parseInt(req.body.subscribeNum, 10);
+//   }
+//   const itineraryID = req.params.id;
+//   Itinerary.findById(itineraryID)
+//     .then((singleItinerary) => {
+//       Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
+//         $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
+//         .then((() => {
+//           User.updateOne({ _id: req.user._id }, { $pull: { itineraries: itineraryID } });
+
+//           if (parseInt(req.body.updateSubscribeNum, 10) !== 0) {
+//             User.updateOne({ _id: req.user._id }, { $addToSet: { itineraries: { itinerary: itineraryID, number } } })
+//               .then(() => {
+//                 res.redirect(`/itinerary/itinerary/${itineraryID}`);
+//               })
+//               .catch(error => console.log(error));
+//           } else {
+//             User.updateOne({ _id: req.user._id }, { $pull: { itineraries: { itinerary: itineraryID } } })
+//               .then(() => {
+//                 res.redirect(`/itinerary/itinerary/${itineraryID}`);
+//               })
+//               .catch(error => console.log(error));
+//           }
+//         }))
+//         .catch(err => console.log(err));
+//     })
+//     .catch(error => console.log(error));
+// });
+
+
+// edit itinerary
+// itineraryRoutes.get('/edit/:id', ensureLogin.ensureLoggedIn('/auth/login'), checkUserLoggedOwner(), (req, res, next) => {
+//   const itineraryID = req.params.id;
+//   Itinerary.findById(itineraryID)
+//     .then(((itinerary) => {
+//       res.render('itinerary/edit', { itinerary });
+//     }))
+//     .catch(err => console.log(err));
+// });
+
+
+
+// find
+
+
+// itineraryRoutes.get('/search'), (req, res, next) => {
+
+// }
+
+itineraryRoutes.post(('/search'), (req, res, next) => {
+  let { city, categories, dateFrom, dateTo } = req.body;
+  console.log('before: ', dateTo);
+  dateFromDay = new Date(dateFrom).getDate();
+  dateFromMonth = new Date(dateFrom).getMonth() + 1;
+  dateFromYear = new Date(dateFrom).getFullYear();
+  dateFrom = `${dateFromDay}${dateFromMonth}${dateFromYear}`;
+
+  dateToDay = new Date(dateTo).getDate();
+  dateToMonth = new Date(dateTo).getMonth() + 1;
+  dateToYear = new Date(dateTo).getFullYear();
+  dateTo = `${dateToDay}/${dateToMonth}/${dateToYear}`;
+
+  console.log(dateTo);
+
+  if (categories === undefined) {
+    categories = ['Sports', 'Bars', 'Restaurants'];
+  }
+
+  Itinerary.find({ $and: [{ city }, { categories: { $in: categories } }] })
+    .then((results) => {
+      res.render('itinerary/search', { results });
+    })
+    .catch(err => console.log(err));
+});
+
+itineraryRoutes.get(('/getplaces'), (req, res, next) => {
+  const itineraryID = req.params.id;
+  Itinerary.findById(itineraryID)
+    .then((itinerary) => {
+      
+    })
 });
 
 module.exports = itineraryRoutes;

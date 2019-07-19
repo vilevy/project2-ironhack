@@ -1,3 +1,5 @@
+let lat = '';
+let long = '';
 const addBtn = document.querySelector('#add-place');
 const itineraryForm = document.querySelector('#create-itinerary-form');
 const hours = document.querySelector('#place-hours');
@@ -35,6 +37,8 @@ addBtn.addEventListener('click', () => {
       minutes: minutes.value,
       place: placeName,
       id: placeId,
+      lat,
+      long,
     });
     placesArr.sort((a, b) => {
       if (a.hours !== b.hours) {
@@ -74,7 +78,7 @@ addBtn.addEventListener('click', () => {
     inputHidden.setAttribute('type', 'hidden');
     inputHidden.setAttribute('name', 'place');
     inputHidden.setAttribute('id', placeId);
-    inputHidden.setAttribute('value', `${hours.value}:${minutes.value}:${placeName}:${placeId}`);
+    inputHidden.setAttribute('value', `${hours.value}:${minutes.value}:${placeName}:${placeId}:${lat}:${long}`);
     itineraryForm.append(inputHidden);
   }
   // change values back to default
@@ -117,12 +121,15 @@ const initMap = () => {
     anchorPoint: new google.maps.Point(0, -29),
   });
 
+  
   autocomplete.addListener('place_changed', () => {
     infowindow.close();
     marker.setVisible(false);
     const place = autocomplete.getPlace();
     placeId = place.place_id;
     placeName = place.name;
+    lat = place.geometry.viewport.na.j;
+    long = place.geometry.viewport.ga.j;
     if (!place.geometry) {
       // User entered the name of a Place that was not suggested and
       // pressed the Enter key, or the Place Details request failed.
@@ -240,3 +247,4 @@ window.onload = initMap2();
 // subscribeBtn.addEventListener('click', () => {
 
 // });
+

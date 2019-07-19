@@ -17,9 +17,9 @@
 <br>
 <h2>My itineraries</h2>
 {{#each userFound.itineraries}}
-  {{itinerary.name}} - {{itinerary.city}} - {{itinerary.date}} - <a href="/itinerary/itinerary/{{itinerary._id}}">View</a><br>
+  {{name}} - {{city}} - {{date}} - <a href="/itinerary/itinerary/{{_id}}">View</a><br>
   {{#if ../isGuide}}
-    <a href="/itinerary/edit/{{itinerary._id}}">Edit</a><br>
-    <button id="deleteBtn-{{itinerary._id}}">Delete</button>
+    <a href="/itinerary/edit/{{_id}}">Edit</a><br>
+    <button id="deleteBtn-{{_id}}">Delete</button>
   {{/if}}
 {{/each}}

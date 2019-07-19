@@ -1,8 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('index');
+  const googleKey = process.env.MAPS_KEY;
+  res.render('index', { googleKey });
 });
 
 module.exports = router;
+
