@@ -29,4 +29,4 @@ Victor Levy Gomes Pinto
 - Making a field on the itinerary page, next to the selected places, to show general information and details about it.
 - Confirmation e-mails
 - Reviews of itineraries
-- Search of itineraries by date
+- Searching itineraries by date
