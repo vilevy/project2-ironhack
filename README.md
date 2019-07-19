@@ -26,7 +26,7 @@ Victor Levy Gomes Pinto
 
 ## Unsolved problems:
 
-- Making a field on the itinerary page, next to the selected places, to show general information and details about it.
+- Making a field, next to the selected places, to show general information and details about it.
 - Confirmation e-mails
 - Reviews of itineraries
 - Searching itineraries by date
