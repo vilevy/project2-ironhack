@@ -1,60 +1,41 @@
 const initMap = () => {
-  const mapCenter = {
-    lat: -23.5660039,
-    lng: -46.6514117,
-  };
-
   const markers = [];
 
-  const map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 13,
-    center: mapCenter,
+  const bounds = new google.maps.LatLngBounds();
+
+
+  const map = new google.maps.Map(document.getElementById('map'));
+
+  // fit the map to the newly inclusive bounds
+  map.fitBounds(bounds);
+  const listener = google.maps.event.addListener(map, 'idle', () => {
+    if (map.getZoom() > 16) map.setZoom(16);
+    google.maps.event.removeListener(listener);
   });
 
-  const infowindow = new google.maps.InfoWindow();
-  const infowindowContent = document.getElementById('infowindow-content');
-  infowindow.setContent(infowindowContent);
-  const marker = new google.maps.Marker({
-    map,
-    anchorPoint: new google.maps.Point(0, -29),
+  const infowindow = new google.maps.InfoWindow({
+    maxWidth: 250,
   });
 
-  function placePlaces(places) {
-    if (places.length > 0) {
-      places.forEach((place) => {
-        const center = {
-          lat: parseInt(place.places[1].lat, 10),
-          lng: parseInt(place.places[1].long, 10),
-        };
-        const pin = new google.maps.Marker({
-          position: center,
-          map,
-          title: place.places[0].name,
-        });
-        markers.push(pin);
-      });
-    } else {
-      const center = {
-        lat: places.lat,
-        lng: places.long,
-      };
-      const pin = new google.maps.Marker({
-        position: center,
+
+  const placePlaces = (places) => {
+    for (let i = 0; i < places[0].places.length; i += 1) {
+      const marker = new google.maps.Marker({
+        position: new google.maps.LatLng(parseFloat(places[0].places[i].lat), parseFloat(places[0].places[i].long)),
         map,
-        title: places.name,
       });
-      markers.push(pin);
+      bounds.extend(marker.position);
+      markers.push(marker);
+      google.maps.event.addListener(marker, 'click', () => {
+        infowindow.setContent(`<div><strong>${places[0].places[i].name}</strong>`);
+        infowindow.open(map, marker);
+      });
     }
-  }
-
-  // infowindowContent.children['place-icon'].src = place.icon;
-  // infowindowContent.children['place-name'].textContent = place.name;
-  // infowindowContent.children['place-address'].textContent = address;
-  infowindow.open(map, marker);
+  };
 
 
-  function getPlaces() {
-    const id = document.URL.slice(document.URL.indexOf('itinerary/itinerary/') + 'itinerary/itinerary/'.length)
+  const getPlaces = () => {
+    const id = document.URL.slice(document.URL.indexOf('itinerary/itinerary/') + 'itinerary/itinerary/'.length);
     axios.get(`/itinerary/api/${id}`)
       .then((response) => {
         placePlaces(response.data.places);
@@ -62,7 +43,7 @@ const initMap = () => {
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
   getPlaces();
 };

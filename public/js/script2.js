@@ -10,7 +10,7 @@ const searchCity = () => {
 
   const fillInAddress = () => {
     // Get the place details from the autocomplete object.
-    city = autocomplete.getPlace();
+    let city = autocomplete.getPlace();
     // cityId = city.id;
   };
 
