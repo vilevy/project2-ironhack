@@ -28,7 +28,6 @@ const checkRolesContinue = (userRole) => {
       req.isRole = true;
       next();
     } else {
-      console.log('aquiii');
       req.isRole = false;
       next();
     }
@@ -105,7 +104,7 @@ itineraryRoutes.post('/create', (req, res, next) => {
         name: placeArrSplit[2],
         id: placeArrSplit[3],
         lat: placeArrSplit[4],
-        long: placeArrSplit[5],        
+        long: placeArrSplit[5],
       };
       placesObjArr.push(placeObj);
     });
@@ -189,25 +188,15 @@ itineraryRoutes.get('/itinerary/:id', checkRolesContinue('tourist'), (req, res, 
 });
 
 itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res, next) => {
-  let subscribersNum = parseInt(req.body.subscribeNum, 10);
-  if (req.body.updateNum) {
-    subscribersNum = parseInt(req.body.updateNum, 10);
-  }
+  const subscribersNum = parseInt(req.body.updateNum, 10);
   const itineraryID = req.params.id;
-  let number = 0;
-  Itinerary.findById(itineraryID)
-    .then(((itinerary) => {
-      const { subscribers } = itinerary;
-      subscribers.forEach((el) => {
-        if (JSON.stringify(el.tourist) === JSON.stringify(req.user._id)) {
-          number = el.number;
-        }
-      });
-    }))
-    .catch(err => console.log(err));
 
   Itinerary.findById(itineraryID)
     .then((singleItinerary) => {
+      const { subscribers } = singleItinerary;
+      // let number = 0;
+      const tourist = subscribers.find(trst => JSON.stringify(trst.tourist) === JSON.stringify(req.user._id));
+      const number = (tourist === undefined) ? subscribersNum : parseInt(tourist.number, 10);
       // if sets update to 0 (same as unsubscribe)
       if (subscribersNum === 0) {
         User.updateOne({ _id: req.user._id }, { $pull: { itineraries: itineraryID } })
@@ -221,8 +210,8 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
           .catch(err => console.log(err));
       // if subscribe (not update)
       } else if (!req.body.updateNum) {
-        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum },
-          $push: { subscribers: { tourist: req.user._id, number: subscribersNum } } })
+        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - req.body.subscribeNum },
+          $push: { subscribers: { tourist: req.user._id, number: req.body.subscribeNum } } })
           .then((() => {
             User.updateOne({ _id: req.user._id }, { $push: { itineraries: itineraryID } })
               .then(() => res.redirect(`/itinerary/itinerary/${itineraryID}`))
@@ -231,10 +220,8 @@ itineraryRoutes.post('/itinerary/:id', checkRolesContinue('tourist'), (req, res,
           .catch(err => console.log(err));
       // if updates, not 0 value
       } else {
-        const newNumber = subscribersNum;
-        subscribersNum -= number;
-        if (subscribersNum > number) subscribersNum *= -1;
-        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - subscribersNum, subscribers: { tourist: req.user._id, number: newNumber } } })
+        const newNumber = (subscribersNum > number) ? subscribersNum - number : -(number - subscribersNum);
+        Itinerary.updateOne({ _id: itineraryID }, { $set: { remainingCapacity: singleItinerary.remainingCapacity - newNumber, subscribers: { tourist: req.user._id, number: subscribersNum } } })
           .then((() => {
             User.updateOne({ _id: req.user._id }, { $push: { itineraries: itineraryID } })
               .then(() => res.redirect(`/itinerary/itinerary/${itineraryID}`))
@@ -259,9 +246,8 @@ itineraryRoutes.post(('/search'), (req, res, next) => {
   dateToYear = new Date(dateTo).getFullYear();
   dateTo = `${dateToDay}/${dateToMonth}/${dateToYear}`;
 
-  console.log(dateTo);
   if (categories === undefined) {
-    categories = ['Arts', 'Bar & Nightlife', 'Beliefs', 'Career & Business', 'Cars & Vehicles', 'Dance', 'Family', 'Fashion & Beauty', 'Food & Drink', 'LGBTQ', 'Language & Culture', 'Learning & Courses', 'Music', 'Outdoors & Adventure', 'Pets',  'Photography', 'Shopping', 'Social', 'Sports & Fitness', 'Tech'];
+    categories = ['Arts', 'Bar & Nightlife', 'Beliefs', 'Career & Business', 'Cars & Vehicles', 'Dance', 'Family', 'Fashion & Beauty', 'Food & Drink', 'LGBTQ', 'Language & Culture', 'Learning & Courses', 'Music', 'Outdoors & Adventure', 'Pets', 'Photography', 'Shopping', 'Social', 'Sports & Fitness', 'Tech'];
   }
 
   Itinerary.find({ $and: [{ city }, { categories: { $in: categories } }] })

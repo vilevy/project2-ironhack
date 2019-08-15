@@ -21,7 +21,6 @@ const deletePlaceFromItinerary = (i) => {
 };
 
 addBtn.addEventListener('click', () => {
-  console.log(placesArr);
   // checks if time have already been set and sort places by time
   let checkTime = false;
   for (let i = 0; i < placesArr.length; i += 1) {
@@ -201,8 +200,6 @@ const searchCity = () => {
     // Get the place details from the autocomplete object.
     city = autocomplete.getPlace();
     const cityD = city.getDetails();
-    console.log(cityD);
-    // cityId = city.id;
   };
 
   // When the user selects an address from the dropdown, populate the address
